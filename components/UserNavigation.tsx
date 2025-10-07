@@ -6,15 +6,23 @@ import Image from "next/image";
 import logo from "@/public/assets/logo.png";
 import Link from "next/link";
 
-export default function UserNavigation() {
+interface UserNavigationProps {
+  onLogout?: () => void;
+}
+
+export default function UserNavigation({ onLogout }: UserNavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuthContext();
 
   const handleLogout = async () => {
-    const { error } = await logout();
-    if (!error) {
-      router.push("/");
+    if (onLogout) {
+      onLogout();
+    } else {
+      const { error } = await logout();
+      if (!error) {
+        router.push("/");
+      }
     }
   };
 

@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, adminLoading, loading } = useAuthContext();
   const router = useRouter();
+  
+  // State for dashboard metrics
+  const [totalPlayers, setTotalPlayers] = useState<number | null>(null);
+  const [totalIncome, setTotalIncome] = useState<number | null>(null);
+  const [metricsLoading, setMetricsLoading] = useState(true);
 
   useEffect(() => {
     // If not loading and user is not admin, redirect to user dashboard
@@ -15,6 +20,53 @@ export default function AdminDashboardPage() {
       router.replace('/user/dashboard');
     }
   }, [user, isAdmin, adminLoading, loading, router]);
+
+  // Fetch dashboard metrics when admin is verified
+  useEffect(() => {
+    if (!loading && !adminLoading && user && isAdmin) {
+      fetchDashboardMetrics();
+    }
+  }, [loading, adminLoading, user, isAdmin]);
+
+  const fetchDashboardMetrics = async () => {
+    setMetricsLoading(true);
+    
+    try {
+      // Get the user's ID token for admin verification
+      if (!user) {
+        throw new Error('No user found');
+      }
+
+      const idToken = await user.getIdToken();
+
+      // Fetch metrics from API route using Firebase Admin SDK
+      const response = await fetch('/api/admin/dashboard-metrics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setTotalPlayers(data.totalPlayers || 0);
+        setTotalIncome(data.totalIncome || 0);
+      } else {
+        console.error('API Error:', data.error);
+        setTotalPlayers(0);
+        setTotalIncome(0);
+      }
+
+    } catch (error) {
+      console.error('Error fetching dashboard metrics:', error);
+      setTotalPlayers(0);
+      setTotalIncome(0);
+    }
+    
+    setMetricsLoading(false);
+  };
 
   // Show loading while checking auth and admin status
   if (loading || adminLoading) {
@@ -47,12 +99,27 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="flex-1 bg-[#fa9130] text-[#1b1b1b] p-6 rounded-lg">
           <h2 className="text-2xl mb-2">Total Players</h2>
-          <p className="text-5xl font-bold">Loading...</p>
+          <p className="text-5xl font-bold">
+            {metricsLoading ? (
+              <span className="animate-pulse">Loading...</span>
+            ) : (
+              totalPlayers?.toLocaleString() || '0'
+            )}
+          </p>
         </div>
 
         <div className="flex-1 bg-[#70a2e4] text-[#1b1b1b] p-6 rounded-lg">
           <h2 className="text-2xl mb-2">Total Income</h2>
-          <p className="text-5xl font-bold">Loading...</p>
+          <p className="text-5xl font-bold">
+            {metricsLoading ? (
+              <span className="animate-pulse">Loading...</span>
+            ) : (
+              `$${totalIncome?.toLocaleString(undefined, { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+              }) || '0.00'}`
+            )}
+          </p>
         </div>
       </div>
     </section>

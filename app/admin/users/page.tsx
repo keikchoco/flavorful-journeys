@@ -1,50 +1,84 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { index } from "@/services/users";
-/** Mock user type */
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  enabled: boolean;
-};
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useUserActions, User } from "./hooks/useUserActions";
+import {
+  ResetPasswordModal,
+  DisableUserModal,
+  EnableUserModal,
+  DeleteUserModal,
+  AddUserModal,
+  PasswordDisplayModal
+} from "./components";
 
 export default function AdminUsersPage() {
-  // mock data (replace with real fetch later)
-  const [users, setUsers] = useState<User[]>([
-    { id: "u1", name: "Alice", email: "alice@example.com", enabled: true },
-    { id: "u2", name: "Bob", email: "bob@example.com", enabled: false },
-    { id: "u3", name: "Carol", email: "carol@example.com", enabled: true },
-  ]);
-
+  const { user, isAdmin, adminLoading, loading } = useAuthContext();
+  const router = useRouter();
+  const { resetUserPassword, disableUser, enableUser, deleteUser, createUser } = useUserActions();
+  
+  const [users, setUsers] = useState<User[]>([]);
+  const [usersLoading, setUsersLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "enabled" | "disabled">("all");
 
+  // Redirect non-admin users
   useEffect(() => {
-    loadUsers();
-  
-  }, [])
+    if (!loading && !adminLoading && user && !isAdmin) {
+      router.replace('/user/dashboard');
+    }
+  }, [user, isAdmin, adminLoading, loading, router]);
+
+  // Load users when admin is verified
+  useEffect(() => {
+    if (!loading && !adminLoading && user && isAdmin) {
+      loadUsers();
+    }
+  }, [loading, adminLoading, user, isAdmin]);
   
   const loadUsers = async () => {
-    const users = await index(); // fetch from service
-    console.log("Fetched users:", users);
-  }
+    setUsersLoading(true);
+    try {
+      if (!user) {
+        throw new Error('No user found');
+      }
+
+      const idToken = await user.getIdToken();
+
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setUsers(data.users || []);
+      } else {
+        console.error('API Error:', data.error);
+        setUsers([]);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setUsers([]);
+    }
+    setUsersLoading(false);
+  };
+
   // selected user for actions
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   // modal state
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [showDisableModal, setShowDisableModal] = useState(false);
   const [showEnableModal, setShowEnableModal] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [showReauthModal, setShowReauthModal] = useState(false);
-
-  // add-user form
-  const [newName, setNewName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-
-  // reauth mock
-  const [adminPassword, setAdminPassword] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState("");
+  const [isNewUser, setIsNewUser] = useState(false);
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
@@ -54,25 +88,43 @@ export default function AdminUsersPage() {
     });
   }, [users, filter]);
 
-  // Actions (all mock — replace with real APIs)
+  // Action handlers
   const handleOpenResetPassword = (u: User) => {
     setSelectedUser(u);
     setShowResetPasswordModal(true);
   };
-  const confirmResetPassword = () => {
-    // mock: show console and close
-    console.log("Reset password for", selectedUser?.email);
+  
+  const confirmResetPassword = async () => {
+    if (!selectedUser) return;
+    
+    const result = await resetUserPassword(selectedUser);
+    if (result.success && result.password) {
+      setGeneratedPassword(result.password);
+      setIsNewUser(false);
+      setShowPasswordModal(true);
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+    
     setShowResetPasswordModal(false);
-    setSelectedUser(null);
+    // Don't clear selectedUser here - it's needed for the password modal
   };
 
   const handleOpenDisable = (u: User) => {
     setSelectedUser(u);
     setShowDisableModal(true);
   };
-  const confirmDisable = () => {
+  
+  const confirmDisable = async () => {
     if (!selectedUser) return;
-    setUsers((prev) => prev.map((p) => (p.id === selectedUser.id ? { ...p, enabled: false } : p)));
+    
+    const result = await disableUser(selectedUser);
+    if (result.success) {
+      setUsers((prev) => prev.map((p) => (p.id === selectedUser.id ? { ...p, enabled: false } : p)));
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+    
     setShowDisableModal(false);
     setSelectedUser(null);
   };
@@ -81,39 +133,93 @@ export default function AdminUsersPage() {
     setSelectedUser(u);
     setShowEnableModal(true);
   };
-  const confirmEnable = () => {
+  
+  const confirmEnable = async () => {
     if (!selectedUser) return;
-    setUsers((prev) => prev.map((p) => (p.id === selectedUser.id ? { ...p, enabled: true } : p)));
+    
+    const result = await enableUser(selectedUser);
+    if (result.success) {
+      setUsers((prev) => prev.map((p) => (p.id === selectedUser.id ? { ...p, enabled: true } : p)));
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+    
     setShowEnableModal(false);
     setSelectedUser(null);
   };
 
-  const handleDeleteUser = (u: User) => {
-    if (!confirm(`Delete user ${u.name} (${u.email})? This cannot be undone.`)) return;
-    setUsers((prev) => prev.filter((p) => p.id !== u.id));
+  const handleOpenDeleteUser = (u: User) => {
+    setSelectedUser(u);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!selectedUser) return;
+    
+    const result = await deleteUser(selectedUser);
+    if (result.success) {
+      setUsers((prev) => prev.filter((p) => p.id !== selectedUser.id));
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+
+    setShowDeleteModal(false);
+    setSelectedUser(null);
   };
 
   const handleOpenAddUser = () => {
-    setNewEmail("");
-    setNewName("");
     setShowAddUserModal(true);
   };
-  const confirmAddUser = () => {
-    if (!newName.trim() || !newEmail.trim()) return alert("Name and email required");
-    const id = `u${Math.random().toString(36).slice(2, 9)}`;
-    setUsers((prev) => [{ id, name: newName.trim(), email: newEmail.trim(), enabled: true }, ...prev]);
-    setShowAddUserModal(false);
+  
+  const confirmAddUser = async (name: string, email: string) => {
+    const result = await createUser(name, email);
+    if (result.success && result.userId && result.password) {
+      const newUser = {
+        id: result.userId,
+        name: name.trim(),
+        email: email.trim(),
+        enabled: true
+      };
+      setUsers((prev) => [newUser, ...prev]);
+      setSelectedUser(newUser);
+      setGeneratedPassword(result.password);
+      setIsNewUser(true);
+      setShowPasswordModal(true);
+      setShowAddUserModal(false);
+    } else {
+      alert(`Error: ${result.error}`);
+    }
   };
 
-  const openReauthenticate = () => {
-    setShowReauthModal(true);
-  };
-  const confirmReauthenticate = () => {
-    // mock: accept any password and continue
-    console.log("Reauthenticated with", adminPassword);
-    setShowReauthModal(false);
-    setAdminPassword("");
-  };
+
+
+  // Show loading while checking auth and admin status
+  if (loading || adminLoading) {
+    return (
+      <div className="relative z-10 p-6 md:p-10">
+        <div className="bg-[#E5E5E5] rounded-xl p-6 md:p-10 shadow">
+          <div className="text-center text-[#1b1b1b]">
+            <h1 className="text-2xl mb-4">Loading...</h1>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1b1b1b] mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!isAdmin) {
+    return (
+      <div className="relative z-10 p-6 md:p-10">
+        <div className="bg-[#E5E5E5] rounded-xl p-6 md:p-10 shadow">
+          <div className="text-center text-[#1b1b1b]">
+            <h1 className="text-2xl mb-4">Access Denied</h1>
+            <p>You don't have permission to access this page.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-10 p-6 md:p-10">
@@ -142,6 +248,14 @@ export default function AdminUsersPage() {
             </div>
 
             <button
+              onClick={loadUsers}
+              disabled={usersLoading}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md text-sm md:text-base font-semibold"
+            >
+              {usersLoading ? 'Loading...' : 'Refresh'}
+            </button>
+
+            <button
               onClick={handleOpenAddUser}
               className="px-4 py-2 bg-[#fa9130] hover:bg-[#ad6421] text-[#1B1B1B] rounded-md text-sm md:text-base font-semibold"
             >
@@ -162,7 +276,16 @@ export default function AdminUsersPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {usersLoading ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                      Loading users...
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
                     No users found.
@@ -206,19 +329,10 @@ export default function AdminUsersPage() {
                           </button>
                         )}
 
-                        <button
-                          onClick={() => {
-                            setSelectedUser(u);
-                            // For editing placeholder — open reauth modal then proceed
-                            openReauthenticate();
-                          }}
-                          className="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded text-sm"
-                        >
-                          Edit
-                        </button>
+
 
                         <button
-                          onClick={() => handleDeleteUser(u)}
+                          onClick={() => handleOpenDeleteUser(u)}
                           className="text-white bg-gray-700 hover:bg-gray-800 px-3 py-1 rounded text-sm"
                         >
                           Delete
@@ -233,99 +347,65 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* --- Modals --- */}
+      {/* Modals */}
+      <ResetPasswordModal
+        isOpen={showResetPasswordModal}
+        user={selectedUser}
+        onClose={() => {
+          setShowResetPasswordModal(false);
+          setSelectedUser(null);
+        }}
+        onConfirm={confirmResetPassword}
+      />
 
-      {/* Reset Password Modal */}
-      {showResetPasswordModal && selectedUser && (
-        <Modal onClose={() => setShowResetPasswordModal(false)}>
-          <h3 className="text-xl font-semibold mb-4">Reset User Password</h3>
-          <p className="mb-6">The password for <strong>{selectedUser.email}</strong> will be reset to the default.</p>
-          <div className="flex justify-end gap-3">
-            <button onClick={() => { setShowResetPasswordModal(false); setSelectedUser(null); }} className="px-4 py-2 rounded border">Cancel</button>
-            <button onClick={confirmResetPassword} className="px-4 py-2 rounded bg-[#77dd76] text-[#1B1B1B] font-semibold">Reset Password</button>
-          </div>
-        </Modal>
-      )}
+      <DisableUserModal
+        isOpen={showDisableModal}
+        user={selectedUser}
+        onClose={() => {
+          setShowDisableModal(false);
+          setSelectedUser(null);
+        }}
+        onConfirm={confirmDisable}
+      />
 
-      {/* Disable User Modal */}
-      {showDisableModal && selectedUser && (
-        <Modal onClose={() => setShowDisableModal(false)}>
-          <h3 className="text-xl font-semibold mb-4">Disable This User</h3>
-          <p className="mb-6">This user (<strong>{selectedUser.email}</strong>) will not be able to log in.</p>
-          <div className="flex justify-end gap-3">
-            <button onClick={() => { setShowDisableModal(false); setSelectedUser(null); }} className="px-4 py-2 rounded border">Cancel</button>
-            <button onClick={confirmDisable} className="px-4 py-2 rounded bg-red-600 text-white font-semibold">Disable User</button>
-          </div>
-        </Modal>
-      )}
+      <EnableUserModal
+        isOpen={showEnableModal}
+        user={selectedUser}
+        onClose={() => {
+          setShowEnableModal(false);
+          setSelectedUser(null);
+        }}
+        onConfirm={confirmEnable}
+      />
 
-      {/* Enable User Modal */}
-      {showEnableModal && selectedUser && (
-        <Modal onClose={() => setShowEnableModal(false)}>
-          <h3 className="text-xl font-semibold mb-4">Enable This User</h3>
-          <p className="mb-6">This user (<strong>{selectedUser.email}</strong>) will now be able to log in.</p>
-          <div className="flex justify-end gap-3">
-            <button onClick={() => { setShowEnableModal(false); setSelectedUser(null); }} className="px-4 py-2 rounded border">Cancel</button>
-            <button onClick={confirmEnable} className="px-4 py-2 rounded bg-green-600 text-white font-semibold">Enable User</button>
-          </div>
-        </Modal>
-      )}
+      <AddUserModal
+        isOpen={showAddUserModal}
+        onClose={() => setShowAddUserModal(false)}
+        onConfirm={confirmAddUser}
+      />
 
-      {/* Add User Modal */}
-      {showAddUserModal && (
-        <Modal onClose={() => setShowAddUserModal(false)}>
-          <h3 className="text-xl font-semibold mb-4">Add New User</h3>
-          <div className="flex flex-col gap-3 mb-4">
-            <input className="px-3 py-2 rounded border" placeholder="Username" value={newName} onChange={(e) => setNewName(e.target.value)} />
-            <input className="px-3 py-2 rounded border" placeholder="Email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
-          </div>
-          <div className="flex justify-end gap-3">
-            <button onClick={() => setShowAddUserModal(false)} className="px-4 py-2 rounded border">Cancel</button>
-            <button onClick={confirmAddUser} className="px-4 py-2 rounded bg-[#77dd76] text-[#1B1B1B] font-semibold">Add User</button>
-          </div>
-        </Modal>
-      )}
+      <DeleteUserModal
+        isOpen={showDeleteModal}
+        user={selectedUser}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedUser(null);
+        }}
+        onConfirm={confirmDeleteUser}
+      />
 
-      {/* Reauthenticate Modal */}
-      {showReauthModal && (
-        <Modal onClose={() => setShowReauthModal(false)}>
-          <h3 className="text-xl font-semibold mb-4">Re-authenticate</h3>
-          <p className="mb-4">Enter your password to continue:</p>
-          <input
-            type="password"
-            value={adminPassword}
-            onChange={(e) => setAdminPassword(e.target.value)}
-            className="px-3 py-2 rounded border mb-4"
-            placeholder="Admin Password"
-          />
-          <div className="flex justify-end gap-3">
-            <button onClick={() => setShowReauthModal(false)} className="px-4 py-2 rounded border">Cancel</button>
-            <button onClick={confirmReauthenticate} className="px-4 py-2 rounded bg-[#77dd76] text-[#1B1B1B] font-semibold">Confirm</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  );
-}
+      <PasswordDisplayModal
+        isOpen={showPasswordModal}
+        user={selectedUser}
+        password={generatedPassword}
+        isNewUser={isNewUser}
+        onClose={() => {
+          setShowPasswordModal(false);
+          setSelectedUser(null);
+        }}
+      />
 
-/** Simple generic modal wrapper */
-function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="bg-[#1b1b1b] text-[#E5E5E5] rounded-lg max-w-xl w-full p-6">
-        <div>{children}</div>
-        <button
-          aria-label="Close modal"
-          onClick={onClose}
-          className="absolute right-4 top-4 text-[#E5E5E5] opacity-80 hover:opacity-100"
-        >
-          ✕
-        </button>
-      </div>
+
     </div>
   );
 }

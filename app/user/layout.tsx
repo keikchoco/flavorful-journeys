@@ -4,18 +4,23 @@ import hero from "@/public/assets/Loading Screen2.png";
 import UserNavigation from "@/components/UserNavigation";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function UserDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-    const router = useRouter();
+  const router = useRouter();
+  const { logout } = useAuthContext();
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => setShowModal(true);
-  const confirmLogout = () => {
-    router.push("/");
+  const confirmLogout = async () => {
+    const { error } = await logout();
+    if (!error) {
+      router.push("/");
+    }
     setShowModal(false);
   };
   const cancelLogout = () => setShowModal(false);
