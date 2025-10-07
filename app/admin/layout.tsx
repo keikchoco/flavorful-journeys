@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative h-screen overflow-hidden bg-[#1b1b1b] text-[#1b1b1b]">
+    <div className="relative h-screen overflow-hidden bg-[#1b1b1b] text-[#1b1b1b] font-[PixterDisplay]">
       {/* Background */}
       <div className="fixed inset-0">
         <Image
