@@ -168,16 +168,18 @@
 
 @font-face {
   font-family: "PixterDisplay";
-  src: url("/assets/fonts/PixterDisplay.ttf") format("truetype");
+  src: url("/fonts/PixterDisplay.ttf") format("truetype");
+  font-display: swap;
 }
+
 
 @font-face {
   font-family: "PixterDisplay";
-  src: url("/assets/fonts/PixterDisplayBold.ttf") format("truetype");
+  src: url("/fonts/PixterDisplayBold.ttf") format("truetype");
   font-weight: bold;
 }
 
 @font-face {
   font-family: "EarlyGameBoy";
-  src: url("/assets/fonts/EarlyGameBoy.ttf") format("truetype");
+  src: url("/fonts/EarlyGameBoy.ttf") format("truetype");
 }

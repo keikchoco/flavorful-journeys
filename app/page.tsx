@@ -41,7 +41,7 @@ export default function HomePage() {
 ];
 
   return (
-    <main className="min-h-screen text-gray-300 select-none">
+    <main className="min-h-screen font-[PixterDisplay] select-none">
       <header className="relative h-[80vh] sm:h-screen">
         <div className="absolute inset-0">
           <Image

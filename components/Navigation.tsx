@@ -2,31 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const pathname = usePathname();
 
   return (
     <nav
-      className={`fixed w-full top-0 z-50 transition-all bg-black/70 backdrop-blur-md shadow-md select-none`}
+      className={`fixed w-full top-0 z-50 transition-all bg-black/70 backdrop-blur-md shadow-md select-none text-white/90 text-lg`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Image src="/assets/logo.png" alt="logo" width={56} height={56} />
         </div>
 
-        <ul className="hidden md:flex items-center gap-8 text-sm">
+        <ul className="hidden md:flex items-center gap-8 text-lg">
           <li>
-            <a href="#top" className="text-yellow-400">
+            <Link 
+              href="/" 
+              className={pathname === "/" ? "text-yellow-400 cursor-default" : "hover:text-yellow-400 transition-colors"}
+            >
               Home
-            </a>
+            </Link>
           </li>
           <li>
             <a href="#media" className="hover:text-yellow-400 transition-colors">
@@ -34,7 +31,10 @@ export default function Navigation() {
             </a>
           </li>
           <li>
-            <Link href="/support" className="hover:text-yellow-400 transition-colors">
+            <Link 
+              href="/faq" 
+              className={pathname === "/faq" ? "text-yellow-400 cursor-default" : "hover:text-yellow-400 transition-colors"}
+            >
               FAQs
             </Link>
           </li>
@@ -46,12 +46,12 @@ export default function Navigation() {
         </ul>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => (window.location.href = "/login")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md text-xs transition-colors hover:cursor-pointer"
+          <Link
+            href="/login"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md text-lg transition-colors hover:cursor-pointer"
           >
             Login
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
