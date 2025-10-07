@@ -22,21 +22,27 @@ export default function AdminShopPage() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("All");
 
+  const [selectedFilter, setSelectedFilter] = useState("All");
   const [selectedSkin, setSelectedSkin] = useState<Skin | null>(null);
 
   const [newSkin, setNewSkin] = useState({
     name: "",
     price: "",
-    currency: "Coins",
+    currency: "Gems",
     rarity: "",
   });
 
   const openEditModal = (skin: Skin) => {
     setSelectedSkin(skin);
     setShowEditModal(true);
+  };
+
+  const openDeleteModal = (skin: Skin) => {
+    setSelectedSkin(skin);
+    setShowDeleteModal(true);
   };
 
   const handleAddSkin = () => {
@@ -49,8 +55,22 @@ export default function AdminShopPage() {
       rarity: newSkin.rarity,
     };
     setSkins([...skins, newEntry]);
-    setNewSkin({ name: "", price: "", currency: "Coins", rarity: "" });
+    setNewSkin({ name: "", price: "", currency: "Gems", rarity: "" });
     setShowAddModal(false);
+  };
+
+  const handleEditSkin = () => {
+    if (!selectedSkin) return;
+    setSkins((prev) =>
+      prev.map((skin) => (skin.id === selectedSkin.id ? selectedSkin : skin))
+    );
+    setShowEditModal(false);
+  };
+
+  const handleDeleteSkin = () => {
+    if (!selectedSkin) return;
+    setSkins((prev) => prev.filter((skin) => skin.id !== selectedSkin.id));
+    setShowDeleteModal(false);
   };
 
   const filteredSkins =
@@ -146,7 +166,10 @@ export default function AdminShopPage() {
                   >
                     <Edit className="w-5 h-5 inline" />
                   </button>
-                  <button className="text-red-500 hover:text-red-700">
+                  <button
+                    onClick={() => openDeleteModal(skin)}
+                    className="text-red-500 hover:text-red-700"
+                  >
                     <Trash2 className="w-5 h-5 inline" />
                   </button>
                 </td>
@@ -233,6 +256,127 @@ export default function AdminShopPage() {
                   className="px-4 py-2 rounded-lg bg-[#77dd76] hover:bg-[#4ca54b]"
                 >
                   Add
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Modal */}
+      <AnimatePresence>
+        {showEditModal && selectedSkin && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-2xl shadow-xl p-8 w-[90%] md:w-[400px]"
+            >
+              <h2 className="text-xl font-bold mb-4">Edit Skin</h2>
+
+              <input
+                type="text"
+                value={selectedSkin.name}
+                onChange={(e) =>
+                  setSelectedSkin({ ...selectedSkin, name: e.target.value })
+                }
+                className="w-full mb-3 border rounded-lg px-3 py-2"
+              />
+              <input
+                type="number"
+                value={selectedSkin.price}
+                onChange={(e) =>
+                  setSelectedSkin({ ...selectedSkin, price: Number(e.target.value) })
+                }
+                className="w-full mb-3 border rounded-lg px-3 py-2"
+              />
+              <select
+                value={selectedSkin.currency}
+                onChange={(e) =>
+                  setSelectedSkin({
+                    ...selectedSkin,
+                    currency: e.target.value as "Coins" | "Gems",
+                  })
+                }
+                className="w-full mb-3 border rounded-lg px-3 py-2"
+              >
+                <option value="Coins">Coins</option>
+                <option value="Gems">Gems</option>
+              </select>
+              <select
+                value={selectedSkin.rarity}
+                onChange={(e) =>
+                  setSelectedSkin({ ...selectedSkin, rarity: e.target.value })
+                }
+                className="w-full mb-4 border rounded-lg px-3 py-2"
+              >
+                <option>Common</option>
+                <option>Uncommon</option>
+                <option>Rare</option>
+                <option>Epic</option>
+                <option>Legendary</option>
+              </select>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleEditSkin}
+                  className="px-4 py-2 rounded-lg bg-[#fa9130] hover:bg-[#ad6421] text-white"
+                >
+                  Save
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Modal */}
+      <AnimatePresence>
+        {showDeleteModal && selectedSkin && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-2xl shadow-xl p-8 w-[90%] md:w-[400px] text-center"
+            >
+              <h2 className="text-xl font-bold mb-4">Delete Skin</h2>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete{" "}
+                <span className="font-semibold">{selectedSkin.name}</span>?
+              </p>
+
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteSkin}
+                  className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white"
+                >
+                  Delete
                 </button>
               </div>
             </motion.div>
