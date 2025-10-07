@@ -35,10 +35,10 @@ export default function HomePage() {
   ];
 
   const techLogos = [
-  { node: <>DON'T LET THE FOOD BURN</>},
-  { node: <>SABOTAGE OR GET SABOTAGED!</>},
-  { node: <>ONLY THE FASTEST WINS</>},
-];
+    { node: <>DON'T LET THE FOOD BURN</> },
+    { node: <>SABOTAGE OR GET SABOTAGED!</> },
+    { node: <>ONLY THE FASTEST WINS</> },
+  ];
 
   return (
     <main className="min-h-screen font-[PixterDisplay] select-none">
@@ -78,7 +78,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 flex flex-col lg:flex-row items-center gap-8 sm:gap-10">
+      <section className="px-4 sm:px-6 py-10 sm:pt-46 pb-56 flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-10 bg-white w-full">
         <div className="flex-shrink-0">
           <Image
             src="/assets/Cauldron.gif"
@@ -90,33 +90,33 @@ export default function HomePage() {
         </div>
 
         <div className="max-w-xl text-center lg:text-left">
-          <h1 className="text-xl sm:text-2xl text-yellow-400 mb-3 sm:mb-4 leading-tight">
+          <h1 className="text-xl sm:text-3xl font-bold text-black mb-3 sm:mb-4 leading-tight">
             CHOP, COOK, BEAT ONE ANOTHER
           </h1>
-          <p className="text-xs sm:text-sm text-gray-300 mb-6 leading-relaxed">
+          <p className="text-xs sm:text-lg text-black mb-6 leading-relaxed">
             Step into a fast-paced 1v1 cooking showdown where speed, strategy,
             and skill decide who’s the ultimate chef! Compete to gather rare
             ingredients, cook the most dishes, and earn the highest score before
             time runs out. Every second counts — outcook your rival and claim
             the title of master chef!
           </p>
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm">
+          <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm hover:cursor-pointer hover:scale-110 hover:rotate-3 transition-all">
             PLAY NOW
           </button>
         </div>
       </section>
 
-      <div className="w-full">
+      <div className="w-full bg-[#77dd76]">
         <Image
           src="/assets/ingredients.png"
           alt="ingredients divider"
           width={1920}
           height={193}
-          className="w-full object-cover"
+          className="w-full object-cover -translate-y-1/2"
         />
       </div>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 space-y-14 sm:space-y-20">
+      <section className="w-full flex flex-col items-center px-4 sm:px-6 pt-14 sm:pt-20 space-y-14 sm:space-y-20 bg-[#77dd76] pb-60">
         {features.map((f, idx) => (
           <div
             key={idx}
@@ -125,10 +125,10 @@ export default function HomePage() {
             } items-center gap-6 sm:gap-8`}
           >
             <div className="w-full lg:w-1/2 text-center lg:text-left">
-              <div className="inline-block bg-yellow-500 text-black px-3 py-1 rounded-md text-xs mb-3 sm:mb-4">
+              <div className="inline-block bg-yellow-500 text-black px-3 py-1 rounded-md mb-3 sm:mb-4 text-2xl font-bold">
                 {f.ribbon}
               </div>
-              <p className="text-sm sm:text-base leading-relaxed">{f.text}</p>
+              <p className="text-xl text-black leading-relaxed">{f.text}</p>
             </div>
 
             <div className="w-full lg:w-1/2 flex justify-center">
@@ -137,121 +137,132 @@ export default function HomePage() {
                 alt={f.ribbon}
                 width={460}
                 height={300}
-                className="rounded-lg shadow-lg w-full max-w-sm sm:max-w-md"
+                className="rounded-lg w-full h-60"
               />
             </div>
           </div>
         ))}
       </section>
 
-      <div className="w-full">
+      <div className="w-full bg-white">
         <Image
           src="/assets/Bread.png"
           alt="bread divider"
           width={1920}
           height={230}
-          className="w-full object-cover"
+          className="w-full object-cover -translate-y-1/2"
         />
       </div>
 
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
-        <h2 className="text-xl sm:text-2xl text-yellow-400 mb-3 sm:mb-4">
+      <section className="px-4 sm:px-6 pt-12 sm:pt-16 text-center bg-white flex flex-col items-center pb-50">
+        <h2 className="text-xl sm:text-7xl font-bold text-[#77dd76] mb-3 sm:mb-4">
           SUPPORT
         </h2>
-        <p className="text-xs sm:text-sm text-gray-300 mb-6 leading-relaxed">
+        <p className="text-xs sm:text-lg text-black/98 mb-6 leading-relaxed">
           Need Help? We're here to make your cooking adventure smooth and fun!
-          If you’ve got questions, we’ve got answers. From game mechanics to
-          troubleshooting, everything you need is just a click away.
+          If you’ve got questions, we’ve got answers.
+          <br />
+          From game mechanics to troubleshooting, everything you need is just a
+          click away.
         </p>
         <button
           onClick={() => (window.location.href = "/support")}
-          className="bg-yellow-500 hover:bg-yellow-600 text-black px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm"
+          className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm hover:cursor-pointer hover:scale-110 hover:rotate-3 transition-all"
         >
           Help? Click Me!
         </button>
       </section>
 
-      <section className="relative bg-gray-900 py-10 sm:py-12">
+      <section>
         <Image
           src="/assets/Footer2.png"
           alt="footer border"
           width={1920}
-          height={160}
-          className="absolute inset-x-0 top-0 w-full -z-10"
+          height={230}
+          className="bg-white"
         />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-8">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
-            <Image
-              src="/assets/Mascot.png"
-              alt="mascot"
-              width={100}
-              height={100}
-            />
-            <div>
-              <h3 className="text-yellow-400 text-lg sm:text-xl">
-                JOIN THE COMMUNITY!
-              </h3>
-              <div className="flex justify-center sm:justify-start items-center gap-3 sm:gap-4 mt-3 text-yellow-400">
-                <Link
-                  href="https://discord.com"
-                  target="_blank"
-                  aria-label="Discord"
-                  className="hover:opacity-80"
+        <div className="bg-[#77dd76] flex flex-row px-48 items-center py-14">
+          <div className="">
+            <h3 className="text-white/98 text-lg sm:text-4xl font-bold">
+              JOIN THE COMMUNITY!
+            </h3>
+            <div className="flex justify-center sm:justify-start items-center gap-3 sm:gap-4 mt-3 text-white/98">
+              <Link
+                href="https://discord.com"
+                target="_blank"
+                aria-label="Discord"
+                className="hover:opacity-80"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  width="26"
+                  height="26"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="26"
-                    height="26"
-                  >
-                    <path d="M14.983 3l.123 .006c2.014 .214 3.527 .672 4.966 1.673a1 1 0 0 1 .371 .488c1.876 5.315 2.373 9.987 1.451 12.28c-1.003 2.005 -2.606 3.553 -4.394 3.553c-.732 0 -1.693 -.968 -2.328 -2.045a21.512 21.512 0 0 0 2.103 -.493a1 1 0 1 0 -.55 -1.924c-3.32 .95 -6.13 .95 -9.45 0a1 1 0 0 0 -.55 1.924c.717 .204 1.416 .37 2.103 .494c-.635 1.075 -1.596 2.044 -2.328 2.044c-1.788 0 -3.391 -1.548 -4.428 -3.629c-.888 -2.217 -.39 -6.89 1.485 -12.204a1 1 0 0 1 .371 -.488c1.439 -1.001 2.952 -1.459 4.966 -1.673a1 1 0 0 1 .935 .435l.063 .107l.651 1.285l.137 -.016a12.97 12.97 0 0 1 2.643 0l.134 .016l.65 -1.284a1 1 0 0 1 .754 -.54l.122 -.009z" />
-                  </svg>
-                </Link>
+                  <path d="M14.983 3l.123 .006c2.014 .214 3.527 .672 4.966 1.673a1 1 0 0 1 .371 .488c1.876 5.315 2.373 9.987 1.451 12.28c-1.003 2.005 -2.606 3.553 -4.394 3.553c-.732 0 -1.693 -.968 -2.328 -2.045a21.512 21.512 0 0 0 2.103 -.493a1 1 0 1 0 -.55 -1.924c-3.32 .95 -6.13 .95 -9.45 0a1 1 0 0 0 -.55 1.924c.717 .204 1.416 .37 2.103 .494c-.635 1.075 -1.596 2.044 -2.328 2.044c-1.788 0 -3.391 -1.548 -4.428 -3.629c-.888 -2.217 -.39 -6.89 1.485 -12.204a1 1 0 0 1 .371 -.488c1.439 -1.001 2.952 -1.459 4.966 -1.673a1 1 0 0 1 .935 .435l.063 .107l.651 1.285l.137 -.016a12.97 12.97 0 0 1 2.643 0l.134 .016l.65 -1.284a1 1 0 0 1 .754 -.54l.122 -.009z" />
+                </svg>
+              </Link>
 
-                <Link
-                  href="https://youtube.com"
-                  target="_blank"
-                  aria-label="YouTube"
-                  className="hover:opacity-80"
+              <Link
+                href="https://youtube.com"
+                target="_blank"
+                aria-label="YouTube"
+                className="hover:opacity-80"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  width="26"
+                  height="26"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="26"
-                    height="26"
-                  >
-                    <path d="M18 3a5 5 0 0 1 5 5v8a5 5 0 0 1 -5 5h-12a5 5 0 0 1 -5 -5v-8a5 5 0 0 1 5 -5zm-9 6v6a1 1 0 0 0 1.514 .857l5 -3a1 1 0 0 0 0 -1.714l-5 -3a1 1 0 0 0 -1.514 .857z" />
-                  </svg>
-                </Link>
-              </div>
+                  <path d="M18 3a5 5 0 0 1 5 5v8a5 5 0 0 1 -5 5h-12a5 5 0 0 1 -5 -5v-8a5 5 0 0 1 5 -5zm-9 6v6a1 1 0 0 0 1.514 .857l5 -3a1 1 0 0 0 0 -1.714l-5 -3a1 1 0 0 0 -1.514 .857z" />
+                </svg>
+              </Link>
             </div>
           </div>
+          <Image
+            src="/assets/Mascot.png"
+            alt="mascot"
+            width={300}
+            height={300}
+            className="absolute right-48 hidden lg:block"
+          />
+        </div>
+      </section>
 
-          <div className="flex flex-col items-center gap-3 sm:gap-4">
-            <ul className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm">
+      <section className="relative bg-[#1b1b1b] py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-8">
+          <div className="flex flex-col items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
+            <h3 className="text-white/98 text-lg sm:text-xl font-bold">
+              Navigation
+            </h3>
+            <ul className="flex flex-col flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm">
               <li>
-                <a href="#top" className="hover:text-yellow-400">
+                <a href="#top" className="hover:text-[#77dd76]">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#media" className="hover:text-yellow-400">
+                <a href="#media" className="hover:text-[#77dd76]">
                   Media
                 </a>
               </li>
               <li>
-                <a href="#faqs" className="hover:text-yellow-400">
+                <a href="#faqs" className="hover:text-[#77dd76]">
                   FAQs
                 </a>
               </li>
               <li>
-                <a href="#about" className="hover:text-yellow-400">
+                <a href="#about" className="hover:text-[#77dd76]">
                   About Us
                 </a>
               </li>
             </ul>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 sm:gap-4">
             <Image
               src="/assets/fillogo.png"
               alt="footer logo"
@@ -260,8 +271,10 @@ export default function HomePage() {
             />
           </div>
         </div>
+      </section>
 
-        <div className="text-center text-[10px] sm:text-xs text-gray-400 mt-6 sm:mt-8 pb-4 sm:pb-6">
+      <section className="bg-[#fa9130] py-4 sm:py-4 px-4">
+        <div className="text-right text-[10px] sm:text-lg text-white">
           © 2025 Copyright Filbyte. All rights reserved.
         </div>
       </section>
