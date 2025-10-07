@@ -1,12 +1,22 @@
 "use client";
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 import Image from "next/image";
 import logo from "@/public/assets/logo.png";
 import Link from "next/link";
 
-export default function UserNavigation({ onLogout }: { onLogout?: () => void }) {
+export default function UserNavigation() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuthContext();
+
+  const handleLogout = async () => {
+    const { error } = await logout();
+    if (!error) {
+      router.push("/");
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 transition-colors duration-300 bg-black/70 backdrop-blur-md shadow-md select-none">
@@ -55,7 +65,7 @@ export default function UserNavigation({ onLogout }: { onLogout?: () => void }) 
         </ul>
 
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="rounded-full border-2 border-white text-white px-6 py-2 text-lg transition-all hover:bg-[#fa9130] hover:border-[#fa9130]"
         >
           Logout

@@ -1,4 +1,3 @@
-"use client";
 import AdminNavigation from "@/components/AdminNavigation";
 import Image from "next/image";
 

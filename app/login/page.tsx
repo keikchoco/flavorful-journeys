@@ -3,25 +3,47 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import logo from "@/public/assets/logo.png";
 import hero from "@/public/assets/Loading Screen2.png";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
     setError("");
-    if (email === "admin@flavorfuljourneys.com" && password === "Flavorful12") {
-      router.push("/admin/dashboard");
-    } else if (email && password) {
-      router.push("/user/dashboard");
-    } else {
-      setError("Please enter valid credentials");
+    setLoading(true);
+    
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      setLoading(false);
+      return;
     }
+
+    const { user, error: loginError } = await login(email, password);
+    
+    if (loginError) {
+      setError(loginError);
+      setLoading(false);
+      return;
+    }
+
+    if (user) {
+      // Check if user is admin (you can customize this logic)
+      if (email === "admin@flavorfuljourneys.com") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/user/dashboard");
+      }
+    }
+    
+    setLoading(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,9 +109,10 @@ export default function LoginPage() {
 
               <button
                 onClick={handleSignIn}
-                className="w-full bg-[#fa9130] hover:bg-[#ad6421] text-[#1B1B1B] hover:text-white hover:cursor-pointer transition-all rounded-xl py-3 font-bold text-lg"
+                disabled={loading}
+                className="w-full bg-[#fa9130] hover:bg-[#ad6421] text-[#1B1B1B] hover:text-white hover:cursor-pointer transition-all rounded-xl py-3 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign In
+                {loading ? "Signing In..." : "Sign In"}
               </button>
 
               {error && (

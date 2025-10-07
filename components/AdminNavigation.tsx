@@ -2,17 +2,23 @@
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
 
 export default function AdminNavigation() {
   const [showLogout, setShowLogout] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuthContext();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setShowLogout(false);
-    router.push("/");
-    console.log("Logging out...");
+    const { error } = await logout();
+    if (!error) {
+      router.push("/");
+    } else {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

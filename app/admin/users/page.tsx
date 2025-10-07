@@ -1,6 +1,6 @@
 "use client";
-import { useMemo, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
+import { index } from "@/services/users";
 /** Mock user type */
 type User = {
   id: string;
@@ -19,6 +19,15 @@ export default function AdminUsersPage() {
 
   const [filter, setFilter] = useState<"all" | "enabled" | "disabled">("all");
 
+  useEffect(() => {
+    loadUsers();
+  
+  }, [])
+  
+  const loadUsers = async () => {
+    const users = await index(); // fetch from service
+    console.log("Fetched users:", users);
+  }
   // selected user for actions
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
