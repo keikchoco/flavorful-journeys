@@ -70,7 +70,7 @@ export default function TopupHistoryPage() {
       {/* Scrollable content */}
       <div className="relative z-10 h-screen overflow-y-auto px-4 sm:px-8 md:px-20 py-24">
         <section className="mx-auto max-w-5xl bg-[#E5E5E5] text-[#1B1B1B] rounded-xl p-10 flex flex-col gap-8">
-          <h1 className="text-3xl sm:text-4xl font-bold">Top Up History</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold select-none">Top Up History</h1>
 
           {/* Loading State */}
           {loading && (
@@ -107,9 +107,9 @@ export default function TopupHistoryPage() {
               {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse bg-white rounded-lg overflow-hidden text-left">
-                  <thead className="bg-[#77dd76] text-[#1B1B1B] font-semibold">
+                  <thead className="bg-[#77dd76] text-[#1B1B1B] font-semibold select-none">
                     <tr>
-                      <th className="px-6 py-3 text-base">Date</th>
+                      <th className="px-6 py-3 text-base">Date & Time</th>
                       <th className="px-6 py-3 text-base">Amount</th>
                       <th className="px-6 py-3 text-base">Gems</th>
                       <th className="px-6 py-3 text-base">Transaction ID</th>
@@ -170,7 +170,7 @@ export default function TopupHistoryPage() {
                   <button
                     onClick={loadTopupHistory}
                     disabled={dataLoading}
-                    className="bg-[#77dd76] hover:bg-[#4ca54b] text-[#1B1B1B] px-6 py-2 rounded font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="bg-[#77dd76] hover:bg-[#4ca54b] text-[#1B1B1B] px-6 py-2 rounded font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed select-none hover:cursor-pointer transition"
                   >
                     Refresh
                   </button>

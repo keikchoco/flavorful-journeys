@@ -33,24 +33,29 @@ export async function POST(request: Request) {
       for (const [transactionId, transaction] of Object.entries(transactions)) {
         const txn = transaction as any;
         
-        // Include transactions that have amount and gems (indicating a topup/purchase)
-        if (txn.amount && txn.gems) {
-          // Format the date from timestamp or ISO string
-          let formattedDate = 'Unknown Date';
-          if (txn.dateCreated) {
-            formattedDate = new Date(txn.dateCreated).toLocaleDateString();
-          } else if (txn.createdAt) {
-            formattedDate = new Date(txn.createdAt).toLocaleDateString();
-          }
+        // Include only "Gem" type transactions (topups/gem purchases)
+        if (txn.type === 'Gem') {
+          const price = txn.price || txn.gems || 0; // Use price, fallback to gems for backward compatibility
+          const gems = txn.gems || txn.amount || 0; // Use gems, fallback to amount for backward compatibility
+          
+          if (price && gems) {
+            // Format the date and time from timestamp or ISO string
+            let formattedDate = 'Unknown Date';
+            if (txn.dateCreated) {
+              formattedDate = new Date(txn.dateCreated).toLocaleString();
+            } else if (txn.createdAt) {
+              formattedDate = new Date(txn.createdAt).toLocaleString();
+            }
 
-          topupHistory.push({
-            id: transactionId,
-            date: formattedDate,
-            amount: `$${txn.amount.toFixed(2)}`,
-            gems: txn.gems.toString(),
-            transactionId: transactionId,
-            rawDate: txn.dateCreated || new Date(txn.createdAt || 0).getTime()
-          });
+            topupHistory.push({
+              id: transactionId,
+              date: formattedDate,
+              amount: `$${price.toFixed(2)}`, // Show price instead of amount
+              gems: gems.toString(),
+              transactionId: transactionId,
+              rawDate: txn.dateCreated || new Date(txn.createdAt || 0).getTime()
+            });
+          }
         }
       }
 

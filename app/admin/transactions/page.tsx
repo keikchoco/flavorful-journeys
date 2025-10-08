@@ -11,8 +11,9 @@ type Transaction = {
   userEmail: string;
   dateCreated: string;
   amount: number;
-  gems: number;
+  price: number;
   item: string;
+  type: "Gem" | "Item";
 };
 
 export default function AdminTransactionsPage() {
@@ -24,9 +25,12 @@ export default function AdminTransactionsPage() {
   const [filter, setFilter] = useState<
     "all" | "latest" | "oldest" | "highest" | "lowest"
   >("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "Gem" | "Item">("all");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const typeDropdownRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   // Redirect non-admin users
@@ -75,7 +79,7 @@ export default function AdminTransactionsPage() {
     setTransactionsLoading(false);
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -83,6 +87,12 @@ export default function AdminTransactionsPage() {
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setDropdownOpen(false);
+      }
+      if (
+        typeDropdownRef.current &&
+        !typeDropdownRef.current.contains(e.target as Node)
+      ) {
+        setTypeDropdownOpen(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -103,16 +113,24 @@ export default function AdminTransactionsPage() {
 
   // Filtering and sorting logic
   const filteredAndSortedTransactions = useMemo(() => {
-    // First filter by search query
+    // First filter by search query and type
     let filtered = transactions;
 
+    // Filter by type
+    if (typeFilter !== "all") {
+      filtered = filtered.filter((transaction) => transaction.type === typeFilter);
+    }
+
+    // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      filtered = transactions.filter((transaction) => {
+      filtered = filtered.filter((transaction) => {
         return (
           transaction.username.toLowerCase().includes(query) ||
           transaction.userEmail.toLowerCase().includes(query) ||
-          transaction.id.toLowerCase().includes(query)
+          transaction.id.toLowerCase().includes(query) ||
+          transaction.item.toLowerCase().includes(query) ||
+          transaction.type.toLowerCase().includes(query)
         );
       });
     }
@@ -138,7 +156,7 @@ export default function AdminTransactionsPage() {
       default:
         return filtered;
     }
-  }, [filter, transactions, searchQuery]);
+  }, [filter, typeFilter, transactions, searchQuery]);
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleString(undefined, {
@@ -183,18 +201,57 @@ export default function AdminTransactionsPage() {
         {/* Header */}
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-            <h1 className="text-3xl font-bold mb-4 sm:mb-0 font-[PixterDisplay]">
+            <h1 className="text-3xl font-bold mb-4 sm:mb-0 font-[PixterDisplay] select-none">
               Transaction Viewer
             </h1>
 
-            <div className="flex items-center gap-3">
-              {/* Filter Dropdown */}
+            <div className="flex items-center gap-3 select-none *:hover:cursor-pointer">
+              {/* Type Filter Dropdown */}
+              <div className="relative" ref={typeDropdownRef}>
+                <button
+                  onClick={() => setTypeDropdownOpen((p) => !p)}
+                  className="flex items-center gap-2 bg-[#E5E5E5] border-2 border-[#1B1B1B] px-4 py-2 rounded-md font-[PixterDisplay] transition hover:cursor-pointer"
+                >
+                  Type:{" "}
+                  <span className="font-semibold">
+                    {typeFilter === "all" ? "All Types" : typeFilter === "Gem" ? "Gem Purchases" : "Item Purchases"}
+                  </span>
+                  <span className="text-sm">▼</span>
+                </button>
+
+                <ul
+                  className={`absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-md overflow-hidden transition-all duration-200 origin-top z-10 ${
+                    typeDropdownOpen
+                      ? "opacity-100 translate-y-0 scale-100"
+                      : "opacity-0 translate-y-2 scale-95 pointer-events-none"
+                  }`}
+                >
+                  {[
+                    { value: "all", label: "All Types" },
+                    { value: "Gem", label: "Gem Purchases" },
+                    { value: "Item", label: "Item Purchases" }
+                  ].map((option) => (
+                    <li
+                      key={option.value}
+                      onClick={() => {
+                        setTypeFilter(option.value as "all" | "Gem" | "Item");
+                        setTypeDropdownOpen(false);
+                      }}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-[PixterDisplay]"
+                    >
+                      {option.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Sort Filter Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((p) => !p)}
-                  className="flex items-center gap-2 bg-[#E5E5E5] border-2 border-[#1B1B1B] px-4 py-2 rounded-md font-[PixterDisplay] transition"
+                  className="flex items-center gap-2 bg-[#E5E5E5] border-2 border-[#1B1B1B] px-4 py-2 rounded-md font-[PixterDisplay] transition hover:cursor-pointer"
                 >
-                  Filter by:{" "}
+                  Sort by:{" "}
                   <span className="font-semibold capitalize">{filter}</span>
                   <span className="text-sm">▼</span>
                 </button>
@@ -235,12 +292,12 @@ export default function AdminTransactionsPage() {
           </div>
 
           {/* Search Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center select-none">
             <div className="relative flex-1 max-w-md">
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search by username, email, or transaction ID..."
+                placeholder="Search by username, email, transaction ID, item, or type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 pl-10 border-2 border-gray-300 rounded-md focus:border-[#77dd76] focus:outline-none font-[PixterDisplay]"
@@ -257,18 +314,29 @@ export default function AdminTransactionsPage() {
                 </button>
               )}
             </div>
-            {searchQuery && (
-              <div className="text-sm text-gray-600 font-[PixterDisplay]">
-                {filteredAndSortedTransactions.length} result(s) found
-              </div>
-            )}
+            <div className="text-sm text-gray-600 font-[PixterDisplay] flex flex-wrap gap-4">
+              {searchQuery && (
+                <span>{filteredAndSortedTransactions.length} result(s) found</span>
+              )}
+              {!searchQuery && (
+                <>
+                  <span>Total: {filteredAndSortedTransactions.length}</span>
+                  {typeFilter === "all" && (
+                    <>
+                      <span>Gems: {transactions.filter(t => t.type === "Gem").length}</span>
+                      <span>Items: {transactions.filter(t => t.type === "Item").length}</span>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Transactions Table */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm sm:text-base">
-            <thead className="bg-[#77DD76] text-[#1B1B1B]">
+            <thead className="bg-[#77DD76] text-[#1B1B1B] select-none">
               <tr>
                 <th className="px-4 py-3 text-left font-[PixterDisplay]">
                   User Name
@@ -280,13 +348,16 @@ export default function AdminTransactionsPage() {
                   Date
                 </th>
                 <th className="px-4 py-3 text-left font-[PixterDisplay]">
+                  Type
+                </th>
+                <th className="px-4 py-3 text-left font-[PixterDisplay]">
                   Item
                 </th>
                 <th className="px-4 py-3 text-left font-[PixterDisplay]">
                   Amount
                 </th>
                 <th className="px-4 py-3 text-left font-[PixterDisplay]">
-                  Gems
+                  Price
                 </th>
                 <th className="px-4 py-3 text-left font-[PixterDisplay]">
                   Transaction ID
@@ -297,7 +368,7 @@ export default function AdminTransactionsPage() {
               {transactionsLoading ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-4 py-6 text-center text-gray-500"
                   >
                     <div className="flex items-center justify-center gap-2">
@@ -309,7 +380,7 @@ export default function AdminTransactionsPage() {
               ) : filteredAndSortedTransactions.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-4 py-6 text-center text-gray-500"
                   >
                     {searchQuery.trim()
@@ -329,9 +400,18 @@ export default function AdminTransactionsPage() {
                       <td className="px-4 py-3">{t.username}</td>
                       <td className="px-4 py-3">{t.userEmail}</td>
                       <td className="px-4 py-3">{formatDate(t.dateCreated)}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          t.type === 'Gem' 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {t.type}
+                        </span>
+                      </td>
                       <td className="px-4 py-3">{t.item || "N/A"}</td>
-                      <td className="px-4 py-3">${t.amount.toFixed(2)}</td>
-                      <td className="px-4 py-3">{t.gems}</td>
+                      <td className="px-4 py-3">{t.amount}</td>
+                      <td className="px-4 py-3">${t.price?.toFixed(2) || "N/A"}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {t.id}
                       </td>

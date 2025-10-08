@@ -225,9 +225,9 @@ export default function AdminUsersPage() {
     <div className="relative z-10 p-6 md:p-10">
       <div className="bg-[#E5E5E5] rounded-xl p-6 md:p-10 shadow">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold">User Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold select-none">User Management</h1>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 select-none *:hover:cursor-pointer">
             <div className="relative">
               <button
                 onClick={() =>
@@ -238,7 +238,7 @@ export default function AdminUsersPage() {
                     return "all";
                   })
                 }
-                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm md:text-base"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm md:text-base hover:cursor-pointer"
                 aria-haspopup="listbox"
                 aria-expanded={false}
               >
@@ -266,7 +266,7 @@ export default function AdminUsersPage() {
 
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white rounded-md overflow-hidden">
-            <thead className="bg-[#77dd76] text-[#1B1B1B]">
+            <thead className="bg-[#77dd76] text-[#1B1B1B] select-none">
               <tr>
                 <th className="px-4 py-3 text-left">Name</th>
                 <th className="px-4 py-3 text-left">Email</th>
@@ -294,10 +294,10 @@ export default function AdminUsersPage() {
               ) : (
                 filteredUsers.map((u, idx) => (
                   <tr key={u.id} className={idx % 2 === 0 ? "bg-[#f9f9f9]" : "bg-[#e8f7e9]"}>
-                    <td className="px-4 py-3">{u.name}</td>
+                    <td className="px-4 py-3">{u.username}</td>
                     <td className="px-4 py-3">{u.email}</td>
                     <td className="px-4 py-3">{u.id}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 select-none">
                       {u.enabled ? (
                         <span className="px-2 py-1 text-sm bg-green-200 text-green-800 rounded">Enabled</span>
                       ) : (
@@ -305,7 +305,7 @@ export default function AdminUsersPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 select-none *:hover:cursor-pointer">
                         <button
                           onClick={() => handleOpenResetPassword(u)}
                           className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"

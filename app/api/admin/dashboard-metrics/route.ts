@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       totalPlayers = Object.keys(usersData).length;
     }
 
-    // Fetch total income from transactions collection
+    // Fetch total income from transactions collection (only "Gem" type transactions)
     const transactionsRef = adminDatabase.ref('transactions');
     const transactionsSnapshot = await transactionsRef.once('value');
     
@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
     if (transactionsSnapshot.exists()) {
       const transactionsData = transactionsSnapshot.val();
       Object.values(transactionsData).forEach((transaction: any) => {
-        if (transaction.amount && typeof transaction.amount === 'number') {
+        // Only count transactions with type "Gem" for total income
+        if (transaction.type === 'Gem' && transaction.amount && typeof transaction.amount === 'number') {
           totalIncome += transaction.amount;
         }
       });

@@ -47,17 +47,18 @@ export async function POST(request: Request) {
       const txn = transaction as any;
       
       // Find user data by userId
-      const userData = usersData[txn.userId] || { name: 'Unknown User', email: 'unknown@example.com' };
+      const userData = usersData[txn.userId] || { name: 'Unknown User', username: 'Unknown User', email: 'unknown@example.com' };
       
       transactions.push({
         id: transactionId,
         userId: txn.userId,
         amount: txn.amount || 0,
         dateCreated: txn.dateCreated,
-        gems: txn.gems || 0,
+        price: txn.price || txn.gems || 0, // Use price if available, fallback to gems for backward compatibility
         item: txn.item || '',
+        type: txn.type || 'Gem', // Default to 'Gem' for backward compatibility
         // Add user information
-        username: userData.username || 'Unknown User',
+        username: userData.username || userData.name || 'Unknown User',
         userEmail: userData.email || 'unknown@example.com'
       });
     }

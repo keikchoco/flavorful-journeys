@@ -1,7 +1,8 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { usePrefetchedNavigation } from "@/hooks/usePrefetchedNavigation";
 import Image from "next/image";
 import logo from "@/public/assets/logo.png";
 import Link from "next/link";
@@ -14,6 +15,14 @@ export default function UserNavigation({ onLogout }: UserNavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuthContext();
+  const [loadingPath, setLoadingPath] = useState<string | null>(null);
+  const { navigateWithPrefetch, isNavigating } = usePrefetchedNavigation({
+    onLoadingStateChange: (loading) => {
+      if (!loading) {
+        setLoadingPath(null);
+      }
+    }
+  });
 
   const handleLogout = async () => {
     if (onLogout) {
@@ -24,6 +33,40 @@ export default function UserNavigation({ onLogout }: UserNavigationProps) {
         router.push("/");
       }
     }
+  };
+
+  const handleNavigation = async (path: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Don't navigate if we're already on this page
+    if (pathname === path) {
+      return;
+    }
+
+    setLoadingPath(path);
+    await navigateWithPrefetch(path);
+  };
+
+  const NavLink = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => {
+    const isActive = pathname === href;
+    const isLoading = loadingPath === href;
+    
+    return (
+      <a
+        href={href}
+        onClick={(e) => handleNavigation(href, e)}
+        className={`${className} ${isLoading ? 'opacity-50 cursor-wait' : ''} transition-all duration-200`}
+      >
+        {isLoading ? (
+          <span className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+            {children}
+          </span>
+        ) : (
+          children
+        )}
+      </a>
+    );
   };
 
   return (
@@ -39,36 +82,36 @@ export default function UserNavigation({ onLogout }: UserNavigationProps) {
 
         <ul className="hidden md:flex gap-6 text-white text-lg">
           <li>
-            <Link 
+            <NavLink 
               href="/user/dashboard" 
               className={pathname === "/user/dashboard" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Dashboard
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link 
+            <NavLink 
               href="/user/topup-history" 
               className={pathname === "/user/topup-history" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Top Up History
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link 
-              href="/user/gem-spending-history" 
-              className={pathname === "/user/gem-spending-history" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
+            <NavLink 
+              href="/user/spending-history" 
+              className={pathname === "/user/spending-history" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
-              Gem Spending History
-            </Link>
+              Spending History
+            </NavLink>
           </li>
           <li>
-            <Link 
+            <NavLink 
               href="/user/account-settings" 
               className={pathname === "/user/account-settings" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Account Settings
-            </Link>
+            </NavLink>
           </li>
         </ul>
 

@@ -58,12 +58,14 @@ export async function POST(request: Request) {
         return bTime - aTime;
       });
 
-      // Calculate total topup - since your transactions don't have type field,
-      // we'll assume all transactions with amount are topups/purchases
+      // Calculate total topup - only count "Gem" type transactions using price column
       transactionsList.forEach((txn: any) => {
-        // All transactions with amount are considered topups for total calculation
-        if (txn.amount && typeof txn.amount === 'number') {
-          totalTopup += txn.amount;
+        // Only count transactions with type "Gem" for total topup calculation using price
+        if (txn.type === 'Gem') {
+          const price = txn.price || txn.gems || 0; // Use price, fallback to gems for backward compatibility
+          if (price && typeof price === 'number') {
+            totalTopup += price;
+          }
         }
       });
 

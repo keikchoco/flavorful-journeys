@@ -94,7 +94,7 @@ export default function UserDashboardPage() {
     <>
       <AdminRedirect />
       <div className="bg-[#E5E5E5] rounded-xl shadow-lg p-8 md:p-12 mb-20">
-        <h1 className="text-2xl md:text-3xl font-bold mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-8 select-none">
           Welcome Back, <span>{dashboardData.username}</span>
         </h1>
 
@@ -115,19 +115,19 @@ export default function UserDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div className="flex justify-between items-center bg-[#70a2e4] text-[#1B1B1B] rounded-xl p-6">
           <div>
-            <h2 className="text-3xl font-bold">GEMS</h2>
+            <h2 className="text-3xl font-bold select-none">GEMS</h2>
             {dataLoading ? (
               <div className="h-10 bg-black/10 rounded animate-pulse mt-2"></div>
             ) : (
               <p className="text-4xl">{dashboardData.gemsCount}</p>
             )}
           </div>
-          <Image src={gems} alt="Gems" className="w-[70px] h-[70px] object-contain" />
+          <Image src={gems} alt="Gems" className="w-[70px] h-[70px] object-contain select-none" />
         </div>
 
         <div className="flex justify-between items-center bg-[#77dd76] text-[#1B1B1B] rounded-xl p-6">
           <div>
-            <h2 className="text-3xl font-bold">TOTAL TOPUP</h2>
+            <h2 className="text-3xl font-bold select-none">TOTAL TOPUP</h2>
             {dataLoading ? (
               <div className="h-10 bg-black/10 rounded animate-pulse mt-2"></div>
             ) : (
@@ -138,7 +138,7 @@ export default function UserDashboardPage() {
 
         <div className="flex justify-between items-center bg-[rgb(216,78,78)] text-[#1B1B1B] rounded-xl p-6">
           <div>
-            <h2 className="text-3xl font-bold">LAST PURCHASED</h2>
+            <h2 className="text-3xl font-bold select-none">LAST PURCHASED</h2>
             {dataLoading ? (
               <div className="h-10 bg-black/10 rounded animate-pulse mt-2"></div>
             ) : (

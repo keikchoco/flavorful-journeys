@@ -229,7 +229,7 @@ export default function AccountSettingsPage() {
       <div className="relative z-10 h-screen overflow-y-auto py-24 px-4 sm:px-8 md:px-20">
         <section className="mx-auto max-w-4xl bg-[#E5E5E5] text-[#1B1B1B] rounded-xl p-10 flex flex-col gap-8">
           {/* Header and toggle */}
-          <div className="flex flex-col sm:flex-row justify-between gap-4 sm:items-center">
+          <div className="flex flex-col sm:flex-row justify-between gap-4 sm:items-center select-none">
             <h1 className="text-3xl sm:text-4xl font-bold">Account Settings</h1>
             <div className="flex gap-3">
               <button
@@ -258,34 +258,34 @@ export default function AccountSettingsPage() {
           {/* Email section */}
           {activeSection === "email" && (
             <div className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold">
+              <h2 className="text-2xl font-semibold select-none">
                 Current Email Address:{" "}
-                <span className="text-[#fa9130]">
+                <span className="text-[#fa9130] select-text">
                   {profileLoading ? "Loading..." : profile?.email || "Not available"}
                 </span>
               </h2>
               
               {profile?.needsPasswordReset && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded select-none">
                   <p>🔒 You need to change your password. Please update your password below for security.</p>
                 </div>
               )}
 
-              <h2 className="text-2xl font-semibold">Change Email</h2>
+              <h2 className="text-2xl font-semibold select-none">Change Email</h2>
               
               {emailError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded select-none">
                   <p>{emailError}</p>
                 </div>
               )}
               
               {emailSuccess && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded select-none">
                   <p>{emailSuccess}</p>
                 </div>
               )}
 
-              <form onSubmit={handleEmailUpdate} className="flex flex-col gap-4">
+              <form onSubmit={handleEmailUpdate} className="flex flex-col gap-4 select-none">
                 <input
                   type="email"
                   placeholder="New Email Address"
@@ -309,21 +309,21 @@ export default function AccountSettingsPage() {
           {/* Password section */}
           {activeSection === "password" && (
             <div className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold">Change Password</h2>
+              <h2 className="text-2xl font-semibold select-none">Change Password</h2>
               
               {passwordError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded select-none">
                   <p>{passwordError}</p>
                 </div>
               )}
               
               {passwordSuccess && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded select-none">
                   <p>{passwordSuccess}</p>
                 </div>
               )}
 
-              <form onSubmit={handlePasswordUpdate} className="flex flex-col gap-4">
+              <form onSubmit={handlePasswordUpdate} className="flex flex-col gap-4 select-none">
                 <input
                   type="password"
                   placeholder="Current Password"

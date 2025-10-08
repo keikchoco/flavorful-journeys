@@ -318,12 +318,12 @@ export default function AdminShopPage() {
       <div className="bg-[#E5E5E5] rounded-xl p-6 md:p-10 shadow">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-[#1b1b1b]">Shop Management</h1>
-          <div className="flex gap-3">
+          <h1 className="text-3xl font-bold text-[#1b1b1b] select-none">Shop Management</h1>
+          <div className="flex gap-3 select-none">
             <div className="relative">
               <button
                 onClick={() => setShowFilter(!showFilter)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#fa9130] hover:bg-[#ad6421] text-white transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#fa9130] hover:bg-[#ad6421] text-white transition-colors hover:cursor-pointer"
               >
                 <Filter size={16} />
                 Filter
@@ -355,7 +355,7 @@ export default function AdminShopPage() {
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#77dd76] hover:bg-[#4ca54b] text-black transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#77dd76] hover:bg-[#4ca54b] text-black transition-colors hover:cursor-pointer"
             >
               <Plus size={16} />
               Add Item
@@ -373,7 +373,7 @@ export default function AdminShopPage() {
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-gray-50 border-b select-none">
                   <tr>
                     <th className="text-left p-4 font-semibold">Image</th>
                     <th className="text-left p-4 font-semibold">Name</th>
