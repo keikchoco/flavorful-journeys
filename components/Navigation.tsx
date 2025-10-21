@@ -38,11 +38,11 @@ export default function Navigation() {
               FAQs
             </Link>
           </li>
-          <li>
+          {/* <li>
             <a href="#about" className="hover:text-yellow-400 transition-colors">
               About
             </a>
-          </li>
+          </li> */}
         </ul>
 
         <div className="flex items-center gap-4">

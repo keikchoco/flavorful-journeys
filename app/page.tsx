@@ -116,13 +116,12 @@ export default function HomePage() {
         />
       </div>
 
-      <section className="w-full flex flex-col items-center px-4 sm:px-6 pt-14 sm:pt-20 space-y-14 sm:space-y-20 bg-[#77dd76] pb-60">
+      <section id="media" className="w-full flex flex-col items-center px-4 sm:px-6 pt-14 sm:pt-20 space-y-14 sm:space-y-20 bg-[#77dd76] pb-60">
         {features.map((f, idx) => (
           <div
             key={idx}
-            className={`flex flex-col ${
-              f.reverse ? "lg:flex-row-reverse" : "lg:flex-row"
-            } items-center gap-6 sm:gap-8`}
+            className={`flex flex-col ${f.reverse ? "lg:flex-row-reverse" : "lg:flex-row"
+              } items-center gap-6 sm:gap-8`}
           >
             <div className="w-full lg:w-1/2 text-center lg:text-left">
               <div className="inline-block bg-yellow-500 text-black px-3 py-1 rounded-md mb-3 sm:mb-4 text-2xl font-bold">
@@ -166,7 +165,7 @@ export default function HomePage() {
           click away.
         </p>
         <button
-          onClick={() => (window.location.href = "/support")}
+          onClick={() => (window.location.href = "/faq")}
           className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm hover:cursor-pointer hover:scale-110 hover:rotate-3 transition-all"
         >
           Help? Click Me!
@@ -254,11 +253,11 @@ export default function HomePage() {
                   FAQs
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a href="#about" className="hover:text-[#77dd76]">
                   About Us
                 </a>
-              </li>
+              </li> */}
             </ul>
           </div>
 

@@ -41,9 +41,9 @@ export default function FAQPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch('/api/faqs');
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -100,44 +100,44 @@ export default function FAQPage() {
         ) : (
           <div className="flex flex-col gap-4">
             {faqs.map((item: FAQ, i: number) => (
-            <motion.div
-              key={i}
-              className="bg-[#f7f4f0] rounded-xl shadow-lg p-6"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.1 }}
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="flex justify-between items-center w-full text-left"
+              <motion.div
+                key={i}
+                className="bg-[#f7f4f0] rounded-xl shadow-lg p-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.1 }}
               >
-                <p className="font-bold text-lg">{item.question}</p>
-                <motion.div
-                  animate={{ rotate: openIndex === i ? 90 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-[#1b1b1b]"
+                <button
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                  className="flex justify-between items-center w-full text-left"
                 >
-                  <ChevronRight size={30} />
-                </motion.div>
-              </button>
-
-              <AnimatePresence>
-                {openIndex === i && (
+                  <p className="font-bold text-lg">{item.question}</p>
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
+                    animate={{ rotate: openIndex === i ? 90 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+                    className="text-[#1b1b1b]"
                   >
-                    <p className="mt-3 text-base md:text-lg pl-3 text-[#1b1b1b]/80">
-                      {item.answer}
-                    </p>
+                    <ChevronRight size={30} />
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+                </button>
+
+                <AnimatePresence>
+                  {openIndex === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="mt-3 text-base md:text-lg pl-3 text-[#1b1b1b]/80">
+                        {item.answer}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
           </div>
         )}
       </section>
