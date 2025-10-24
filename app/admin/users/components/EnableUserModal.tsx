@@ -17,14 +17,14 @@ export function EnableUserModal({ isOpen, user, onClose, onConfirm }: EnableUser
       <h3 className="text-xl font-semibold mb-4">Enable This User</h3>
       <p className="mb-6">This user (<strong>{user.email || 'Unknown User'}</strong>) will now be able to log in.</p>
       <div className="flex justify-end gap-3">
-        <button 
-          onClick={onClose} 
+        <button
+          onClick={onClose}
           className="px-4 py-2 rounded border"
         >
           Cancel
         </button>
-        <button 
-          onClick={onConfirm} 
+        <button
+          onClick={onConfirm}
           className="px-4 py-2 rounded bg-green-600 text-white font-semibold"
         >
           Enable User

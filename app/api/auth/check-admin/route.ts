@@ -6,8 +6,8 @@ export async function POST(request: NextRequest) {
     const { idToken } = await request.json();
 
     if (!idToken) {
-      return NextResponse.json({ 
-        isAdmin: false, 
+      return NextResponse.json({
+        isAdmin: false,
         error: 'No token provided',
         reason: 'missing_token'
       }, { status: 400 });
@@ -20,10 +20,10 @@ export async function POST(request: NextRequest) {
     // Check if user exists in admins collection in Realtime Database
     const adminRef = adminDatabase.ref(`admins/${userId}`);
     const snapshot = await adminRef.once('value');
-    
+
     let isAdmin = false;
     let reason = 'not_in_admin_collection';
-    
+
     if (snapshot.exists()) {
       const adminValue = snapshot.val();
       if (adminValue === true) {
@@ -34,9 +34,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ 
-      isAdmin, 
-      userId, 
+    return NextResponse.json({
+      isAdmin,
+      userId,
       email: decodedToken.email,
       reason,
       adminValue: snapshot.exists() ? snapshot.val() : null
@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error checking admin status:', error);
-    return NextResponse.json({ 
-      isAdmin: false, 
+    return NextResponse.json({
+      isAdmin: false,
       error: 'Invalid token or server error',
       reason: 'token_verification_failed'
     }, { status: 401 });

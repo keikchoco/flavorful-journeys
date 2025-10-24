@@ -12,7 +12,7 @@ export type User = {
 
 export function useUserActions() {
   const { user } = useAuthContext();
-  
+
   // Generate random 8-character password
   const generateRandomPassword = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -25,18 +25,18 @@ export function useUserActions() {
 
   const resetUserPassword = async (selectedUser: User): Promise<{ success: boolean; password?: string; error?: string }> => {
     if (!user) return { success: false, error: 'No user authenticated' };
-    
+
     try {
       const newPassword = generateRandomPassword();
       const idToken = await user.getIdToken();
-      
+
       const response = await fetch('/api/admin/users/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          idToken, 
+        body: JSON.stringify({
+          idToken,
           userId: selectedUser.id,
           email: selectedUser.email,
           newPassword: newPassword
@@ -56,21 +56,25 @@ export function useUserActions() {
     }
   };
 
-  const disableUser = async (selectedUser: User): Promise<{ success: boolean; error?: string }> => {
+  const disableUser = async (
+    selectedUser: User,
+    reason?: string
+  ): Promise<{ success: boolean; error?: string }> => {
     if (!user) return { success: false, error: 'No user authenticated' };
-    
+
     try {
       const idToken = await user.getIdToken();
-      
+
       const response = await fetch('/api/admin/users/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          idToken, 
+        body: JSON.stringify({
+          idToken,
           userId: selectedUser.id,
-          action: 'disable'
+          action: 'disable',
+          reason,
         }),
       });
 
@@ -89,17 +93,17 @@ export function useUserActions() {
 
   const enableUser = async (selectedUser: User): Promise<{ success: boolean; error?: string }> => {
     if (!user) return { success: false, error: 'No user authenticated' };
-    
+
     try {
       const idToken = await user.getIdToken();
-      
+
       const response = await fetch('/api/admin/users/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          idToken, 
+        body: JSON.stringify({
+          idToken,
           userId: selectedUser.id,
           action: 'enable'
         }),
@@ -120,17 +124,17 @@ export function useUserActions() {
 
   const deleteUser = async (selectedUser: User): Promise<{ success: boolean; error?: string }> => {
     if (!user) return { success: false, error: 'No user authenticated' };
-    
+
     try {
       const idToken = await user.getIdToken();
-      
+
       const response = await fetch('/api/admin/users/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          idToken, 
+        body: JSON.stringify({
+          idToken,
           userId: selectedUser.id,
           action: 'delete'
         }),
@@ -151,17 +155,17 @@ export function useUserActions() {
 
   const createUser = async (name: string, email: string): Promise<{ success: boolean; userId?: string; password?: string; error?: string }> => {
     if (!user) return { success: false, error: 'No user authenticated' };
-    
+
     try {
       const idToken = await user.getIdToken();
-      
+
       const response = await fetch('/api/admin/users/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          idToken, 
+        body: JSON.stringify({
+          idToken,
           name: name.trim(),
           email: email.trim()
         }),

@@ -19,7 +19,7 @@ export default function LoginPage() {
   const handleSignIn = async () => {
     setError("");
     setLoading(true);
-    
+
     if (!email || !password) {
       setError("Please enter both email and password");
       setLoading(false);
@@ -27,7 +27,7 @@ export default function LoginPage() {
     }
 
     const { user, error: loginError } = await login(email, password);
-    
+
     if (loginError) {
       setError(loginError);
       setLoading(false);
@@ -42,7 +42,7 @@ export default function LoginPage() {
         router.push("/user/dashboard");
       }
     }
-    
+
     setLoading(false);
   };
 
@@ -114,6 +114,16 @@ export default function LoginPage() {
               >
                 {loading ? "Signing In..." : "Sign In"}
               </button>
+
+              <div className="text-sm text-[#1b1b1b] text-center">
+                Don't have an account?{" "}
+                <a
+                  href="/register"
+                  className="text-sm text-[#fa9130] hover:text-[#ad6421] hover:cursor-pointer transition-all"
+                >
+                  Sign Up
+                </a>
+              </div>
 
               {error && (
                 <h3 className="text-red-500 text-center text-base">{error}</h3>

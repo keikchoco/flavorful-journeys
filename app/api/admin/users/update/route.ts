@@ -3,7 +3,7 @@ import { adminAuth, adminDatabase } from '@/lib/firebase-admin';
 
 export async function POST(request: NextRequest) {
   try {
-    const { idToken, userId, action } = await request.json();
+    const { idToken, userId, action, reason } = await request.json();
 
     if (!idToken || !userId || !action) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -16,30 +16,36 @@ export async function POST(request: NextRequest) {
     // Check if user is admin
     const adminRef = adminDatabase.ref(`admins/${adminUserId}`);
     const adminSnapshot = await adminRef.once('value');
-    
+
     if (!adminSnapshot.exists() || adminSnapshot.val() !== true) {
       return NextResponse.json({ error: 'Access denied - not an admin' }, { status: 403 });
     }
 
     // Update user based on action
     const userRef = adminDatabase.ref(`users/${userId}`);
-    
+
     switch (action) {
       case 'enable':
-        await userRef.update({ enabled: true });
+        // await adminAuth.updateUser(userId, { disabled: false });
+        await userRef.update({
+          enabled: true,
+          disabledReason: null,
+          disabledAt: null,
+        });
         break;
       case 'disable':
-        await userRef.update({ enabled: false });
+        // await adminAuth.updateUser(userId, { disabled: true });
+        await userRef.update({
+          enabled: false,
+          disabledReason: reason || 'No reason provided',
+          disabledAt: new Date().toISOString(),
+        });
         break;
       case 'delete':
-        // Actually delete the user from Firebase Auth and Database
         try {
-          // Delete from Firebase Auth first
           await adminAuth.deleteUser(userId);
-          // Then remove from database
           await userRef.remove();
         } catch (authError: any) {
-          // If user doesn't exist in Auth, still remove from database
           if (authError.code === 'auth/user-not-found') {
             await userRef.remove();
           } else {
@@ -51,14 +57,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: `User ${action}d successfully`
     });
 
   } catch (error) {
     console.error('Error updating user:', error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to update user'
     }, { status: 500 });
   }

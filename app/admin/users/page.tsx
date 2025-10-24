@@ -16,7 +16,7 @@ export default function AdminUsersPage() {
   const { user, isAdmin, adminLoading, loading } = useAuthContext();
   const router = useRouter();
   const { resetUserPassword, disableUser, enableUser, deleteUser, createUser } = useUserActions();
-  
+
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "enabled" | "disabled">("all");
@@ -34,7 +34,7 @@ export default function AdminUsersPage() {
       loadUsers();
     }
   }, [loading, adminLoading, user, isAdmin]);
-  
+
   const loadUsers = async () => {
     setUsersLoading(true);
     try {
@@ -93,10 +93,10 @@ export default function AdminUsersPage() {
     setSelectedUser(u);
     setShowResetPasswordModal(true);
   };
-  
+
   const confirmResetPassword = async () => {
     if (!selectedUser) return;
-    
+
     const result = await resetUserPassword(selectedUser);
     if (result.success && result.password) {
       setGeneratedPassword(result.password);
@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
     } else {
       alert(`Error: ${result.error}`);
     }
-    
+
     setShowResetPasswordModal(false);
     // Don't clear selectedUser here - it's needed for the password modal
   };
@@ -114,17 +114,19 @@ export default function AdminUsersPage() {
     setSelectedUser(u);
     setShowDisableModal(true);
   };
-  
-  const confirmDisable = async () => {
+
+  const confirmDisable = async (reason: string) => {
     if (!selectedUser) return;
-    
-    const result = await disableUser(selectedUser);
+
+    const result = await disableUser(selectedUser, reason);
     if (result.success) {
-      setUsers((prev) => prev.map((p) => (p.id === selectedUser.id ? { ...p, enabled: false } : p)));
+      setUsers((prev) => prev.map((p) =>
+        p.id === selectedUser.id ? { ...p, enabled: false } : p
+      ));
     } else {
       alert(`Error: ${result.error}`);
     }
-    
+
     setShowDisableModal(false);
     setSelectedUser(null);
   };
@@ -133,17 +135,17 @@ export default function AdminUsersPage() {
     setSelectedUser(u);
     setShowEnableModal(true);
   };
-  
+
   const confirmEnable = async () => {
     if (!selectedUser) return;
-    
+
     const result = await enableUser(selectedUser);
     if (result.success) {
       setUsers((prev) => prev.map((p) => (p.id === selectedUser.id ? { ...p, enabled: true } : p)));
     } else {
       alert(`Error: ${result.error}`);
     }
-    
+
     setShowEnableModal(false);
     setSelectedUser(null);
   };
@@ -155,7 +157,7 @@ export default function AdminUsersPage() {
 
   const confirmDeleteUser = async () => {
     if (!selectedUser) return;
-    
+
     const result = await deleteUser(selectedUser);
     if (result.success) {
       setUsers((prev) => prev.filter((p) => p.id !== selectedUser.id));
@@ -170,7 +172,7 @@ export default function AdminUsersPage() {
   const handleOpenAddUser = () => {
     setShowAddUserModal(true);
   };
-  
+
   const confirmAddUser = async (name: string, email: string) => {
     const result = await createUser(name, email);
     if (result.success && result.userId && result.password) {
