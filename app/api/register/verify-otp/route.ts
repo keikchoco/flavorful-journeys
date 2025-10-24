@@ -22,9 +22,7 @@ export async function POST(req: Request) {
         if (data.otp !== otp) {
             return NextResponse.json({ error: "Invalid OTP." }, { status: 400 });
         }
-
-        // ✅ OTP is valid
-        await otpRef.remove(); // clean up
+        await otpRef.remove();
 
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (err) {

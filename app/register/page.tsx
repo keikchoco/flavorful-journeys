@@ -87,7 +87,6 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      // Send OTP request to backend (Node API using Nodemailer)
       const res = await axios.post("/api/register/send-otp", { email });
       if (res.status === 200) {
 
@@ -95,7 +94,7 @@ export default function RegisterPage() {
           "registerData",
           JSON.stringify({ username, email, password, confirmPassword })
         );
-        
+
         router.push(
           `/verify-otp?username=${encodeURIComponent(username)}&email=${encodeURIComponent(
             email

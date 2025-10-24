@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import logo from "@/public/assets/logo.png";
 
 export default function VerifyOtpPage() {
     const router = useRouter();
+
     const searchParams = useSearchParams();
 
     // Retrieve registration info from URL params
@@ -116,7 +117,6 @@ export default function VerifyOtpPage() {
                             onChange={(e) => setOtp(e.target.value)}
                             className="w-full text-center border border-gray-400 rounded-xl px-4 py-3 text-black/70 text-lg tracking-widest focus:outline-none focus:border-[#fa9130] hover:border-[#77dd76]"
                         />
-
                         <button
                             onClick={handleVerify}
                             disabled={loading}
@@ -174,6 +174,6 @@ export default function VerifyOtpPage() {
                     </div>
                 </div>
             </section>
-        </main>
+        </main >
     );
 }
