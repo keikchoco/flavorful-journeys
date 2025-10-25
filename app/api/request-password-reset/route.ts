@@ -1,4 +1,3 @@
-// /api/request-password-reset.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDatabase } from '@/lib/firebase-admin';
 import crypto from 'crypto';
@@ -12,7 +11,7 @@ export async function POST(request: NextRequest) {
         // Get user by email
         const user = await adminAuth.getUserByEmail(email);
         const userId = user.uid;
-
+        console.log('User ID:', userId);
         // Generate reset token
         const resetToken = crypto.randomBytes(32).toString('hex');
         const expiresAt = Date.now() + 3600_000; // 1 hour
