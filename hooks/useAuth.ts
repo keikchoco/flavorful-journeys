@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  User, 
+import {
+  User,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -21,7 +21,7 @@ export function useAuth() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       setLoading(false);
-      
+
       // Set/clear session cookies for middleware
       if (user) {
         // Get the ID token for server-side verification
@@ -29,7 +29,7 @@ export function useAuth() {
         // Store the actual Firebase ID token (not just email)
         document.cookie = `firebase-id-token=${token}; path=/; max-age=3600; secure; samesite=strict`;
         document.cookie = `firebase-user-id=${user.uid}; path=/; max-age=3600; secure; samesite=strict`;
-        
+
         // Check admin status via API
         checkAdminStatus(token);
       } else {
@@ -53,19 +53,19 @@ export function useAuth() {
         },
         body: JSON.stringify({ idToken: token }),
       });
-      
+
       const data = await response.json();
-      
+
       // Default to false if user is not in admin collection or any other case
       setIsAdmin(data.isAdmin === true);
-      
+
       // Optional: Log the reason for debugging
       console.log('Admin check result:', {
         isAdmin: data.isAdmin,
         reason: data.reason,
         userId: data.userId
       });
-      
+
     } catch (error) {
       console.error('Error checking admin status:', error);
       // Always default to false on error
