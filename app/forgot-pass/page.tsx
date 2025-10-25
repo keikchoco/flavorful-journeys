@@ -103,7 +103,7 @@ export default function ForgotPasswordPage() {
                             className="object-contain"
                         />
                         <h2 className="text-center text-[#1B1B1B] text-lg font-medium">
-                            Reset your password and continue your flavorful journey 🍽️
+                            Reset your password and continue your flavorful journey
                         </h2>
                     </div>
                 </div>
