@@ -18,8 +18,8 @@ export default function Navigation() {
 
         <ul className="hidden md:flex items-center gap-8 text-lg">
           <li>
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className={pathname === "/" ? "text-yellow-400 cursor-default" : "hover:text-yellow-400 transition-colors"}
             >
               Home
@@ -31,8 +31,8 @@ export default function Navigation() {
             </a>
           </li>
           <li>
-            <Link 
-              href="/faq" 
+            <Link
+              href="/faq"
               className={pathname === "/faq" ? "text-yellow-400 cursor-default" : "hover:text-yellow-400 transition-colors"}
             >
               FAQs
@@ -44,15 +44,23 @@ export default function Navigation() {
             </a>
           </li> */}
         </ul>
-
-        <div className="flex items-center gap-4">
+        <div className="flex flex-row items-center gap-4">
           <Link
             href="/login"
             className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md text-lg transition-colors hover:cursor-pointer"
           >
             Login
           </Link>
+
+          <Link
+            href="/download"
+            className="border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black px-4 py-2 rounded-md text-lg transition-colors hover:cursor-pointer"
+          >
+            Download
+          </Link>
         </div>
+
+
       </div>
     </nav>
   );

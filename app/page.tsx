@@ -11,25 +11,25 @@ export default function HomePage() {
     {
       ribbon: "1V1 COMPETITION",
       text: "Beat your opponent or let them cook!",
-      img: "/assets/MO1.webp",
+      img: "/assets/Multiplayer.png",
       reverse: false,
     },
     {
       ribbon: "GATHER!",
       text: "Raid goblin huts, harvest crops, steal other player's ingredients — it's up to you!",
-      img: "/assets/MO2.gif",
+      img: "/assets/Gathering.png",
       reverse: true,
     },
     {
       ribbon: "COOK FAST!",
       text: "Toss it in the pan, don't let it burn — timing is everything!",
-      img: "/assets/MO3.webp",
+      img: "/assets/Cooking.png",
       reverse: false,
     },
     {
       ribbon: "COSMETICS!",
       text: "From classical hats to modern ones, choose your favorite cosmetic!",
-      img: "/assets/MO4.gif",
+      img: "/assets/Cosmetics.png",
       reverse: true,
     },
   ];
@@ -136,7 +136,7 @@ export default function HomePage() {
                 alt={f.ribbon}
                 width={460}
                 height={300}
-                className="rounded-lg w-full h-60"
+                className="rounded-lg w-full h-auto object-contain max-w-[460px] min-w-[320px]"
               />
             </div>
           </div>
