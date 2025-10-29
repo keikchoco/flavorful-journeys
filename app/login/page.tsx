@@ -29,7 +29,7 @@ export default function LoginPage() {
     const { user, error: loginError } = await login(email, password);
 
     if (loginError) {
-      setError(loginError);
+      setError("Invalid Password or Email");
       setLoading(false);
       return;
     }
@@ -128,6 +128,14 @@ export default function LoginPage() {
               {error && (
                 <h3 className="text-red-500 text-center text-base">{error}</h3>
               )}
+              <div className="text-sm text-[#1b1b1b] text-center">
+                <a
+                  href="/forgot-pass"
+                  className="text-sm text-[#969696] hover:text-[#7d7d7d] hover:cursor-pointer transition-all"
+                >
+                  Forgot your password?
+                </a>
+              </div>
             </div>
           </div>
 
