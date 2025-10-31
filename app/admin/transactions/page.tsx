@@ -14,8 +14,8 @@ type Transaction = {
   price: number;
   item: string;
   type: "Gem" | "Item";
+  paymentMethod: "In-game" | "PayPal" | "Unknown";
 };
-
 export default function AdminTransactionsPage() {
   const { user, isAdmin, adminLoading, loading } = useAuthContext();
   const router = useRouter();
@@ -220,11 +220,10 @@ export default function AdminTransactionsPage() {
                 </button>
 
                 <ul
-                  className={`absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-md overflow-hidden transition-all duration-200 origin-top z-10 ${
-                    typeDropdownOpen
-                      ? "opacity-100 translate-y-0 scale-100"
-                      : "opacity-0 translate-y-2 scale-95 pointer-events-none"
-                  }`}
+                  className={`absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-md overflow-hidden transition-all duration-200 origin-top z-10 ${typeDropdownOpen
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-2 scale-95 pointer-events-none"
+                    }`}
                 >
                   {[
                     { value: "all", label: "All Types" },
@@ -257,11 +256,10 @@ export default function AdminTransactionsPage() {
                 </button>
 
                 <ul
-                  className={`absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-md shadow-md overflow-hidden transition-all duration-200 origin-top z-10 ${
-                    dropdownOpen
-                      ? "opacity-100 translate-y-0 scale-100"
-                      : "opacity-0 translate-y-2 scale-95 pointer-events-none"
-                  }`}
+                  className={`absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-md shadow-md overflow-hidden transition-all duration-200 origin-top z-10 ${dropdownOpen
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-2 scale-95 pointer-events-none"
+                    }`}
                 >
                   {["all", "latest", "oldest", "highest", "lowest"].map(
                     (option) => (
@@ -360,6 +358,9 @@ export default function AdminTransactionsPage() {
                   Price
                 </th>
                 <th className="px-4 py-3 text-left font-[PixterDisplay]">
+                  Payment Method
+                </th>
+                <th className="px-4 py-3 text-left font-[PixterDisplay]">
                   Transaction ID
                 </th>
               </tr>
@@ -393,25 +394,24 @@ export default function AdminTransactionsPage() {
                   (t: Transaction, i: number) => (
                     <tr
                       key={t.id}
-                      className={`${
-                        i % 2 === 0 ? "bg-[#e8f7e9]" : "bg-[#f9f9f9]"
-                      } font-[PixterDisplay]`}
+                      className={`${i % 2 === 0 ? "bg-[#e8f7e9]" : "bg-[#f9f9f9]"
+                        } font-[PixterDisplay]`}
                     >
                       <td className="px-4 py-3">{t.username}</td>
                       <td className="px-4 py-3">{t.userEmail}</td>
                       <td className="px-4 py-3">{formatDate(t.dateCreated)}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          t.type === 'Gem' 
-                            ? 'bg-blue-100 text-blue-800' 
-                            : 'bg-green-100 text-green-800'
-                        }`}>
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${t.type === 'Gem'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-green-100 text-green-800'
+                          }`}>
                           {t.type}
                         </span>
                       </td>
                       <td className="px-4 py-3">{t.item || "N/A"}</td>
                       <td className="px-4 py-3">{t.amount}</td>
                       <td className="px-4 py-3">${t.price?.toFixed(2) || "N/A"}</td>
+                      <td className="px-4 py-3">{t.paymentMethod}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {t.id}
                       </td>

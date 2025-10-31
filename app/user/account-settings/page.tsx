@@ -13,17 +13,17 @@ type UserProfile = {
 export default function AccountSettingsPage() {
   const { user, loading } = useAuthContext();
   const [activeSection, setActiveSection] = useState<"email" | "password">("email");
-  
+
   // Profile data
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  
+
   // Email form
   const [newEmail, setNewEmail] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [emailSuccess, setEmailSuccess] = useState<string | null>(null);
-  
+
   // Password form
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -40,11 +40,11 @@ export default function AccountSettingsPage() {
 
   const loadUserProfile = async () => {
     if (!user) return;
-    
+
     try {
       setProfileLoading(true);
       const idToken = await user.getIdToken();
-      
+
       const response = await fetch('/api/user/profile', {
         method: 'POST',
         headers: {
@@ -61,7 +61,7 @@ export default function AccountSettingsPage() {
 
       if (result.success) {
         setProfile(result.profile);
-        
+
         // Auto-switch to password section if user needs to reset password
         if (result.profile.needsPasswordReset && activeSection !== "password") {
           setActiveSection("password");
@@ -87,7 +87,7 @@ export default function AccountSettingsPage() {
 
       // Update email using Firebase client SDK
       await updateEmail(user, newEmail);
-      
+
       // Also update in our database
       const idToken = await user.getIdToken();
       const response = await fetch('/api/user/update-email', {
@@ -149,15 +149,23 @@ export default function AccountSettingsPage() {
 
       // Update password using Firebase client SDK
       await updatePassword(user, newPassword);
-      
+
+      // ✅ Update database flag to false
+      const idToken = await user.getIdToken();
+      await fetch('/api/user/update-password-flag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
       setPasswordSuccess('Password updated successfully!');
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      
-      // Reload profile to update needsPasswordReset flag
+
+      // Reload profile to reflect updated flag
       loadUserProfile();
-      
+
     } catch (error: any) {
       console.error('Password update error:', error);
       if (error.code === 'auth/wrong-password') {
@@ -234,21 +242,19 @@ export default function AccountSettingsPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setActiveSection("email")}
-                className={`px-5 py-2 rounded-lg font-semibold transition-all ${
-                  activeSection === "email"
+                className={`px-5 py-2 rounded-lg font-semibold transition-all ${activeSection === "email"
                     ? "bg-[#fa9130] text-[#1B1B1B]"
                     : "bg-[#fa9130]/80 text-white hover:bg-[#ad6421]"
-                }`}
+                  }`}
               >
                 Change Email
               </button>
               <button
                 onClick={() => setActiveSection("password")}
-                className={`px-5 py-2 rounded-lg font-semibold transition-all ${
-                  activeSection === "password"
+                className={`px-5 py-2 rounded-lg font-semibold transition-all ${activeSection === "password"
                     ? "bg-[#fa9130] text-[#1B1B1B]"
                     : "bg-[#fa9130]/80 text-white hover:bg-[#ad6421]"
-                } ${profile?.needsPasswordReset ? 'ring-2 ring-red-500 bg-red-500 text-white animate-pulse' : ''}`}
+                  } ${profile?.needsPasswordReset ? 'ring-2 ring-red-500 bg-red-500 text-white animate-pulse' : ''}`}
               >
                 Change Password {profile?.needsPasswordReset && '🔒'}
               </button>
@@ -264,21 +270,21 @@ export default function AccountSettingsPage() {
                   {profileLoading ? "Loading..." : profile?.email || "Not available"}
                 </span>
               </h2>
-              
+
               {profile?.needsPasswordReset && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded select-none">
-                  <p>🔒 You need to change your password. Please update your password below for security.</p>
+                  <p>🔒 You need to change your password. Please update your password on the change password tab for security.</p>
                 </div>
               )}
 
               <h2 className="text-2xl font-semibold select-none">Change Email</h2>
-              
+
               {emailError && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded select-none">
                   <p>{emailError}</p>
                 </div>
               )}
-              
+
               {emailSuccess && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded select-none">
                   <p>{emailSuccess}</p>
@@ -295,7 +301,7 @@ export default function AccountSettingsPage() {
                   required
                   disabled={emailLoading}
                 />
-                <button 
+                <button
                   type="submit"
                   disabled={emailLoading || !newEmail}
                   className="px-5 py-3 bg-[#fa9130] text-[#1B1B1B] rounded-lg font-semibold transition-all hover:bg-[#ad6421] hover:text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -310,13 +316,13 @@ export default function AccountSettingsPage() {
           {activeSection === "password" && (
             <div className="flex flex-col gap-6">
               <h2 className="text-2xl font-semibold select-none">Change Password</h2>
-              
+
               {passwordError && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded select-none">
                   <p>{passwordError}</p>
                 </div>
               )}
-              
+
               {passwordSuccess && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded select-none">
                   <p>{passwordSuccess}</p>
@@ -352,7 +358,7 @@ export default function AccountSettingsPage() {
                   required
                   disabled={passwordLoading}
                 />
-                <button 
+                <button
                   type="submit"
                   disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
                   className="px-5 py-3 bg-[#fa9130] text-[#1B1B1B] rounded-lg font-semibold transition-all hover:bg-[#ad6421] hover:text-white disabled:bg-gray-400 disabled:cursor-not-allowed"

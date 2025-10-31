@@ -38,11 +38,13 @@ export default function Navigation() {
               FAQs
             </Link>
           </li>
-          {/* <li>
-            <a href="#about" className="hover:text-yellow-400 transition-colors">
+          <li>
+            <a href="/about"
+              className={pathname === "/about" ? "text-yellow-400 cursor-default" : "hover:text-yellow-400 transition-colors"}
+            >
               About
             </a>
-          </li> */}
+          </li>
         </ul>
         <div className="flex flex-row items-center gap-4">
           <Link
@@ -62,6 +64,6 @@ export default function Navigation() {
 
 
       </div>
-    </nav>
+    </nav >
   );
 }

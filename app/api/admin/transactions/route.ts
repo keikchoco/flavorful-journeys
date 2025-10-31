@@ -24,40 +24,43 @@ export async function POST(request: Request) {
     // Fetch all transactions
     const transactionsRef = adminDatabase.ref('transactions');
     const transactionsSnapshot = await transactionsRef.once('value');
-    
+
     if (!transactionsSnapshot.exists()) {
-      return NextResponse.json({ 
-        success: true, 
-        transactions: [] 
+      return NextResponse.json({
+        success: true,
+        transactions: []
       });
     }
 
     const transactionsData = transactionsSnapshot.val();
-    
+
     // Fetch all users for mapping
     const usersRef = adminDatabase.ref('users');
     const usersSnapshot = await usersRef.once('value');
-    
+
     const usersData = usersSnapshot.exists() ? usersSnapshot.val() : {};
 
     // Process transactions and add user data
     const transactions = [];
-    
+
     for (const [transactionId, transaction] of Object.entries(transactionsData)) {
       const txn = transaction as any;
-      
+
       // Find user data by userId
       const userData = usersData[txn.userId] || { name: 'Unknown User', username: 'Unknown User', email: 'unknown@example.com' };
-      
+
+      const paymentMethod =
+        txn.type === "Item" ? "In-game" : txn.type === "Gem" ? "PayPal" : "Unknown";
+
       transactions.push({
         id: transactionId,
         userId: txn.userId,
         amount: txn.amount || 0,
         dateCreated: txn.dateCreated,
-        price: txn.price || txn.gems || 0, // Use price if available, fallback to gems for backward compatibility
+        price: txn.price || txn.gems || 0,
         item: txn.item || '',
-        type: txn.type || 'Gem', // Default to 'Gem' for backward compatibility
-        // Add user information
+        type: txn.type || 'Gem',
+        paymentMethod, // ✅ new field
         username: userData.username || userData.name || 'Unknown User',
         userEmail: userData.email || 'unknown@example.com'
       });
@@ -70,15 +73,15 @@ export async function POST(request: Request) {
       return dateB - dateA;
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      transactions 
+    return NextResponse.json({
+      success: true,
+      transactions
     });
 
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    return NextResponse.json({ 
-      error: 'Failed to fetch transactions' 
+    return NextResponse.json({
+      error: 'Failed to fetch transactions'
     }, { status: 500 });
   }
 }

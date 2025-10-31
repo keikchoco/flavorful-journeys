@@ -38,11 +38,11 @@ export default function AdminNavigation() {
   const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const isActive = pathname === href;
     const isLoading = loadingPath === href;
-    
+
     if (isActive) {
       return <span className="text-[#77dd76] cursor-default">{children}</span>;
     }
-    
+
     return (
       <button
         onClick={() => handleNavigation(href)}
@@ -91,6 +91,11 @@ export default function AdminNavigation() {
             <li>
               <NavLink href="/admin/shop">
                 Shop Items
+              </NavLink>
+            </li>
+            <li>
+              <NavLink href="/admin/bug-reports">
+                Bug Reports
               </NavLink>
             </li>
           </ul>

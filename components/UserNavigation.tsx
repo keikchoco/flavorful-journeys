@@ -37,7 +37,7 @@ export default function UserNavigation({ onLogout }: UserNavigationProps) {
 
   const handleNavigation = async (path: string, e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     // Don't navigate if we're already on this page
     if (pathname === path) {
       return;
@@ -50,7 +50,7 @@ export default function UserNavigation({ onLogout }: UserNavigationProps) {
   const NavLink = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => {
     const isActive = pathname === href;
     const isLoading = loadingPath === href;
-    
+
     return (
       <a
         href={href}
@@ -82,35 +82,43 @@ export default function UserNavigation({ onLogout }: UserNavigationProps) {
 
         <ul className="hidden md:flex gap-6 text-white text-lg">
           <li>
-            <NavLink 
-              href="/user/dashboard" 
+            <NavLink
+              href="/user/dashboard"
               className={pathname === "/user/dashboard" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Dashboard
             </NavLink>
           </li>
           <li>
-            <NavLink 
-              href="/user/topup-history" 
+            <NavLink
+              href="/user/topup-history"
               className={pathname === "/user/topup-history" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Top Up History
             </NavLink>
           </li>
           <li>
-            <NavLink 
-              href="/user/spending-history" 
+            <NavLink
+              href="/user/spending-history"
               className={pathname === "/user/spending-history" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Spending History
             </NavLink>
           </li>
           <li>
-            <NavLink 
-              href="/user/account-settings" 
+            <NavLink
+              href="/user/account-settings"
               className={pathname === "/user/account-settings" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
             >
               Account Settings
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              href="/user/report-bug"
+              className={pathname === "/user/report-bug" ? "text-[#77dd76] cursor-default" : "hover:text-[#77dd76]"}
+            >
+              Report a Bug
             </NavLink>
           </li>
         </ul>

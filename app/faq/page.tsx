@@ -15,15 +15,19 @@ type FAQ = {
 const fallbackFaqs: FAQ[] = [
   {
     question: "Where can I create my account?",
-    answer: "You can create your account when you download the game!",
+    answer: "You can create your account by clicking the Login button and selecting sign up below.",
   },
   {
-    question: "Where can I place my order?",
-    answer: "You can place your order through our Discord server or Fiverr gig!",
+    question: "Is this game good for kids?",
+    answer: "This is a PG-13 rated game, so it is suitable for teenagers and older players who wanted to enjoy and at the same time learn the basics of cooking.",
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "We accept PayPal for payments.",
+    question: "How do I top up and what payment methods do you accept?",
+    answer: "For easy access around all countries we use paypal as our only and current payment method.",
+  },
+  {
+    question: "Who is the company behind this game?",
+    answer: "This game is developed and published by Filbyte, a company dedicated to creating engaging and fun gaming experiences.",
   }
 ];
 
