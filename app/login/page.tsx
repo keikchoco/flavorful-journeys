@@ -35,16 +35,26 @@ export default function LoginPage() {
     }
 
     if (user) {
-      // Check if user is admin (you can customize this logic)
-      if (email === "admin@flavorfuljourneys.com") {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/user/dashboard");
+      try {
+        const res = await fetch(`/api/get-user?uid=${user.uid}`);
+        const userData = await res.json();
+
+        console.log("Fetched user data:", userData); // 👈 ADD THIS
+
+        if (userData?.isAdmin === true) {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/user/dashboard");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Error verifying account role");
       }
     }
 
     setLoading(false);
   };
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleSignIn();

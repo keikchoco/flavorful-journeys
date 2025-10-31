@@ -55,7 +55,10 @@ export default function Navigation() {
           </Link>
 
           <Link
-            href="/download"
+            href="https://firebasestorage.googleapis.com/v0/b/flavorfuljourneys-6e7b1.firebasestorage.app/o/AmericanHat.png?alt=media&token=2835419a-2b29-4333-a370-e89029f96ec2"
+            download
+            target="_blank"
+            rel="noopener noreferrer"
             className="border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black px-4 py-2 rounded-md text-lg transition-colors hover:cursor-pointer"
           >
             Download

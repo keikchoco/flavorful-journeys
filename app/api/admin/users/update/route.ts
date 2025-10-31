@@ -43,14 +43,24 @@ export async function POST(request: NextRequest) {
         break;
       case 'delete':
         try {
-          await adminAuth.deleteUser(userId);
-          await userRef.remove();
-        } catch (authError: any) {
-          if (authError.code === 'auth/user-not-found') {
-            await userRef.remove();
-          } else {
-            throw authError;
+          // Remove user from Firebase Auth
+          await adminAuth.deleteUser(userId).catch((authError: any) => {
+            if (authError.code !== 'auth/user-not-found') throw authError;
+          });
+
+          // Remove user from admins node if exists
+          const userAdminRef = adminDatabase.ref(`admins/${userId}`);
+          const userAdminSnapshot = await userAdminRef.once('value');
+          if (userAdminSnapshot.exists()) {
+            await userAdminRef.remove();
           }
+
+          // Remove user from users node
+          await userRef.remove();
+
+        } catch (authError: any) {
+          console.error('Error deleting user:', authError);
+          return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
         }
         break;
       default:

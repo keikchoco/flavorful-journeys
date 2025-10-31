@@ -174,7 +174,7 @@ export default function AdminUsersPage() {
   };
 
   const confirmAddUser = async (name: string, email: string) => {
-    const result = await createUser(name, email);
+    const result = await createUser(name, email, isAdmin);
     if (result.success && result.userId && result.password) {
       const newUser = {
         id: result.userId,

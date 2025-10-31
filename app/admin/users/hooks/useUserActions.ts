@@ -153,7 +153,7 @@ export function useUserActions() {
     }
   };
 
-  const createUser = async (name: string, email: string): Promise<{ success: boolean; userId?: string; password?: string; error?: string }> => {
+  const createUser = async (name: string, email: string, isAdmin: boolean = false): Promise<{ success: boolean; userId?: string; password?: string; error?: string }> => {
     if (!user) return { success: false, error: 'No user authenticated' };
 
     try {
@@ -161,13 +161,12 @@ export function useUserActions() {
 
       const response = await fetch('/api/admin/users/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idToken,
           name: name.trim(),
-          email: email.trim()
+          email: email.trim(),
+          isAdmin,
         }),
       });
 
