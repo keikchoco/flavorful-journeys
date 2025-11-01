@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/user/dashboard";
 
   const handleSignIn = async () => {
     setError("");
@@ -39,12 +42,12 @@ export default function LoginPage() {
         const res = await fetch(`/api/get-user?uid=${user.uid}`);
         const userData = await res.json();
 
-        console.log("Fetched user data:", userData); // 👈 ADD THIS
+        console.log("Fetched user data:", userData);
 
         if (userData?.isAdmin === true) {
           router.push("/admin/dashboard");
         } else {
-          router.push("/user/dashboard");
+          router.push(redirectPath);
         }
       } catch (err) {
         console.error(err);
@@ -54,7 +57,6 @@ export default function LoginPage() {
 
     setLoading(false);
   };
-
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleSignIn();
