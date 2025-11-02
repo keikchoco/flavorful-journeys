@@ -87,7 +87,7 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const res = await axios.post("/api/register/send-otp", { email });
+      const res = await axios.post("/api/register/send-otp", { email, username });
       if (res.status === 200) {
 
         sessionStorage.setItem(
@@ -104,7 +104,15 @@ export default function RegisterPage() {
         setError("Failed to send OTP. Please try again.");
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || "An error occurred.");
+      const serverError = err.response?.data?.error;
+
+      if (serverError?.includes("Email is already in use")) {
+        setError("Email is already in use by another account.");
+      } else if (serverError?.includes("Username is already taken")) {
+        setError("Username is already taken by another user.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

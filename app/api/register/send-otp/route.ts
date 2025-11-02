@@ -1,22 +1,48 @@
 import { NextResponse } from "next/server";
-import { adminDatabase } from "@/lib/firebase-admin";
+import { adminAuth, adminDatabase } from "@/lib/firebase-admin";
 import axios from "axios";
-
 
 function sanitizeEmail(email: string) {
   return email.replace(/[.#$[\]@]/g, "_");
 }
+
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const { email, username } = await req.json();
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // ✅ 1. Check if email already exists in Firebase Auth
+    try {
+      await adminAuth.getUserByEmail(email);
+      return NextResponse.json(
+        { error: "Email is already in use by another account." },
+        { status: 400 }
+      );
+    } catch (err: any) {
+      if (err.code !== "auth/user-not-found") throw err;
+    }
 
-    // ✅ Sanitize email for Firebase path
+    // ✅ 2. Check if username is already taken
+    if (username) {
+      const usersRef = adminDatabase.ref("users");
+      const snapshot = await usersRef
+        .orderByChild("username")
+        .equalTo(username)
+        .get();
+
+      if (snapshot.exists()) {
+        return NextResponse.json(
+          { error: "Username is already taken by another user." },
+          { status: 400 }
+        );
+      }
+    }
+
+    // ✅ 3. Generate OTP and save it
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const safeEmail = sanitizeEmail(email);
     const otpRef = adminDatabase.ref(`otps/${safeEmail}`);
 
@@ -25,7 +51,7 @@ export async function POST(req: Request) {
       createdAt: Date.now(),
     });
 
-    // Send OTP email
+    // ✅ 4. Send OTP email
     await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
