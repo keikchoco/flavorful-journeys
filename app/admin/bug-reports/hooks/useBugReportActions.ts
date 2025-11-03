@@ -14,7 +14,7 @@ export function useBugReportActions() {
                 body: JSON.stringify({
                     idToken,
                     reportId,
-                    status: "Closed",
+                    status: "Resolved",
                 }),
             });
 
