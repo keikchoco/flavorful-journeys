@@ -334,7 +334,7 @@ export default function AdminShopPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50"
                 >
-                  {["All", "Common", "Uncommon", "Rare", "Epic", "Legendary"].map(
+                  {["All", "Common", "Epic", "Legendary"].map(
                     (filter) => (
                       <button
                         key={filter}

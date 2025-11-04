@@ -55,7 +55,7 @@ export default function Navigation() {
           </Link>
 
           <Link
-            href="https://firebasestorage.googleapis.com/v0/b/flavorfuljourneys-6e7b1.firebasestorage.app/o/AmericanHat.png?alt=media&token=2835419a-2b29-4333-a370-e89029f96ec2"
+            href="https://firebasestorage.googleapis.com/v0/b/flavorfuljourneys-6e7b1.firebasestorage.app/o/OfficialBuild.zip?alt=media&token=4214c06c-e60b-4194-9bda-a82ffba0406b"
             download
             target="_blank"
             rel="noopener noreferrer"
@@ -64,7 +64,6 @@ export default function Navigation() {
             Download
           </Link>
         </div>
-
 
       </div>
     </nav >

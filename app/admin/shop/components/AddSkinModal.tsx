@@ -94,8 +94,6 @@ export default function AddSkinModal({
         >
           <option value="">Select Tier</option>
           <option value="common">Common</option>
-          <option value="uncommon">Uncommon</option>
-          <option value="rare">Rare</option>
           <option value="epic">Epic</option>
           <option value="legendary">Legendary</option>
         </select>

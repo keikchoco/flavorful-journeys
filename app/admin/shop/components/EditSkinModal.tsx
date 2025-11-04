@@ -129,8 +129,6 @@ export default function EditSkinModal({
               className="w-full mb-4 border rounded-lg px-3 py-2"
             >
               <option value="common">Common</option>
-              <option value="uncommon">Uncommon</option>
-              <option value="rare">Rare</option>
               <option value="epic">Epic</option>
               <option value="legendary">Legendary</option>
             </select>
@@ -144,11 +142,10 @@ export default function EditSkinModal({
                 <button
                   type="button"
                   onClick={() => setImageUploadMode("url")}
-                  className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1 ${
-                    imageUploadMode === "url"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1 ${imageUploadMode === "url"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                    }`}
                 >
                   <Link size={14} />
                   URL
@@ -156,11 +153,10 @@ export default function EditSkinModal({
                 <button
                   type="button"
                   onClick={() => setImageUploadMode("file")}
-                  className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1 ${
-                    imageUploadMode === "file"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1 ${imageUploadMode === "file"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                    }`}
                 >
                   <Upload size={14} />
                   Upload
